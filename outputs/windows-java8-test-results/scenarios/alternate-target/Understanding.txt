@@ -1,14 +1,14 @@
 Interface name: GetWebItemAvailability
 
-What this interface does: SYNTHETIC TEST: provide availability information to ecommerce.
+What this interface does: SYNTHETIC test
 
 Current flow: ERP -> middleware -> Sitecore
 
 Target flow: ERP -> middleware -> Shopify
 
-Shopify endpoint/reference: https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities
+Shopify endpoint/reference: https://example.myshopify.com/admin/api/2026-07/graphql.json
 
-Shopify operation:
+Shopify operation: productUpdate
 
 Shopify API version:
 

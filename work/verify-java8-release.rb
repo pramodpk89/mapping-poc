@@ -16,9 +16,12 @@ expected=Dir.glob(base+'/**/*',File::FNM_DOTMATCH).select{|f|File.file?(f)}.reje
 raise 'ZIP coverage differs from folder' unless files.sort==expected.sort
 raise 'Copilot skill missing' unless files.include?('copilot-mapping-poc/.github/skills/map-interface/SKILL.md')
 refs=Dir.glob(base+'/Current/Source/*').select{|f|f.match?(/\.(xml|wsdl)$/)}+Dir.glob(base+'/Shopify/Docs/*')+[base+'/Shopify/Target-reference.json']
+baseline = ARGV.fetch(0, "19e2fc0")
 refs.each do |file|
- old, status=Open3.capture2('git','show','HEAD:'+file)
+ old, status=Open3.capture2('git','show',baseline+':'+file)
  raise "Evidence changed: #{file}" unless status.success? && old.b==File.binread(file)
 end
-result={'zip_files_verified'=>files.size,'preserved_reference_files'=>refs.size,'zip_sha256'=>Digest::SHA256.file(zip).hexdigest,'jar_sha256'=>Digest::SHA256.file(base+'/.framework/mapping.jar').hexdigest,'original_evidence'=>'byte-for-byte unchanged','single_working_folder'=>base,'real_purpose'=>'unconfirmed','real_shopify_target'=>'not supplied','wsdl_provenance'=>'unconfirmed'}
+raise "Real target must remain unselected" unless JSON.parse(File.read(base+"/.framework/input.json"))["target"]["selected_operation"].nil?
+raise "Real preflight must block" unless JSON.parse(File.read(base+"/.framework/preflight.json"))["status"]=="blocked"
+result={'reference_baseline'=>baseline,'zip_files_verified'=>files.size,'preserved_reference_files'=>refs.size,'zip_sha256'=>Digest::SHA256.file(zip).hexdigest,'jar_sha256'=>Digest::SHA256.file(base+'/.framework/mapping.jar').hexdigest,'original_evidence'=>'byte-for-byte unchanged','single_working_folder'=>base,'real_purpose'=>'unconfirmed','real_shopify_target'=>'not supplied','wsdl_provenance'=>'unconfirmed'}
 puts JSON.pretty_generate(result)

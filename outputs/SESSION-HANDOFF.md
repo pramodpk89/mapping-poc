@@ -46,16 +46,27 @@ validation was performed. Prior research is not a target selection or a business
 
 ## Validation status
 
-Actual local compilation/execution: Corretto Java 1.8.0_382, macOS, **83 passed, 0 failed**;
-six Windows-only checks are outstanding on this host. Windows CI for this implementation is
-pending and must complete before release is reported complete. Prior Windows passes do not
-validate the new implementation.
+Actual local compilation/execution: Corretto Java 1.8.0_382, macOS, **83 passed, 0 failed**.
+Actual Windows CI: Temurin Java 1.8.0_504, Windows Server 2025, **89 passed, 0 failed,
+0 outstanding automated checks**. The shipped JAR/launcher ran and sources compiled with JDK 8.
+Implementation commit: `0c41ee8b7f54c224e8731bc4b7fe2998ad6367ab`.
+Successful CI: https://github.com/pramodpk89/mapping-poc/actions/runs/36542653010 .
+Downloaded execution evidence: outputs/windows-java8-test-results/; local evidence:
+outputs/java8-test-results/. Later documentation/result commits do not change the tested JAR.
 
-Static inspection checks four generated reports: basic, clarified, reopened, alternate target.
-They are labelled synthetic. Visual browser inspection was attempted but the browser could
-not verify the admin-enforced policy and denied access. No bypass was attempted. Browser
-JavaScript, Print/PDF and the actual analyst Copilot pilot remain unverified.
+Static inspection passed for four reports from each host: basic, clarified, reopened and
+alternate target. It checked no answer feature/raw answer data, seven XML paths, selected
+fixture target, saved chat answers and reopened decisions. All scenarios are synthetic.
+Visual inspection was attempted but the browser could not verify the admin-enforced policy
+and denied access. No bypass was attempted. Browser JavaScript, Print/PDF and an actual
+analyst Copilot pilot remain unverified; no claim of visual execution is made.
 
-Next: run Windows CI on the pushed implementation; download its actual evidence; update the
-validation records and this handoff; verify/repackage the single ZIP and push final records.
+The final ZIP has one copilot-mapping-poc root, includes the hidden Copilot skill, Java sources,
+JAR and tests, and excludes transient history/build files. All file bytes were compared with
+the active folder. Fourteen original source/reference files were verified unchanged against
+pre-session commit 19e2fc0. See outputs/java8-release-validation.json for artifact hashes.
+
+Implementation, instructions, tests, JAR, ZIP and handoff are updated; no further code work
+is outstanding for these requested fixes. The next real run needs the actual interface purpose
+and intended Shopify API reference from the analyst. Do not use synthetic test data to fill them.
 Keep updates and the final summary short.

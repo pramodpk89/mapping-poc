@@ -68,9 +68,16 @@ bytes too. The portable suite is also compiled and run on a real local Java 8 ru
 
 ## Current validation
 
-Local Java 8 execution: **83 passed, 0 failed**, six Windows-only checks outstanding on
-macOS. Windows CI for this implementation is pending; it must run before release is complete.
-The preceding release's Windows result is not evidence for this implementation.
+Actual Java 8 execution:
+
+- macOS / Corretto 1.8.0_382: **83 passed, 0 failed**. Six Windows-only checks were marked
+  outstanding on this host and then executed in Windows CI.
+- Windows Server 2025 / Temurin 1.8.0_504: **89 passed, 0 failed, 0 outstanding**.
+  [Successful CI run](https://github.com/pramodpk89/mapping-poc/actions/runs/36542653010)
+  executed the shipped JAR/launcher and compiled the sources with JDK 8 at implementation
+  commit `0c41ee8b7f54c224e8731bc4b7fe2998ad6367ab`.
+
+Subsequent validation-record/documentation commits do not change the tested JAR or sources.
 
 Cases 76-89 cover XML extraction without WSDL/research bundles, verified normalization,
 orphaned copies, namespaces and duplicate names, SOAP/WSDL metadata, endpoint-only target

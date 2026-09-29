@@ -1,0 +1,37 @@
+{
+  "inspection_method": "Static HTML/embedded JSON and saved analyst files; browser JavaScript not executed",
+  "synthetic": true,
+  "scenarios": [
+    {
+      "scenario": "basic",
+      "static_checks": "passed",
+      "xml_fields": 7,
+      "selected_target_fixture": "inventorySetQuantities",
+      "html_sha256": "6971bf862c4540be0ea9963e5335852f5cc0e7a2f4c73c099cdb31c49476191f"
+    },
+    {
+      "scenario": "clarified",
+      "static_checks": "passed",
+      "xml_fields": 7,
+      "selected_target_fixture": "inventorySetQuantities",
+      "html_sha256": "7b360b311269d69d9f7fac470e1f43dce741ec2d45d5079d7e8fece0eb8dc7c7"
+    },
+    {
+      "scenario": "reopened",
+      "static_checks": "passed",
+      "xml_fields": 7,
+      "selected_target_fixture": "inventorySetQuantities",
+      "html_sha256": "cfd42575c89357487317466382097f00f0172fee46206fc4139fedfdd2e80452"
+    },
+    {
+      "scenario": "alternate-target",
+      "static_checks": "passed",
+      "xml_fields": 7,
+      "selected_target_fixture": "productUpdate",
+      "html_sha256": "24361ab1dfe84a4f0c376a5bfb36db0686717fa96f037e99e3976c2cda2b1aa1"
+    }
+  ],
+  "visual_browser_review": "Blocked: browser could not verify admin-enforced policy; no bypass attempted",
+  "print_pdf": "Not exercised",
+  "analyst_copilot_pilot": "Not exercised"
+}

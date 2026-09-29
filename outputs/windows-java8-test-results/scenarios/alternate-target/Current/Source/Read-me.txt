@@ -1,0 +1,3 @@
+Put source payloads, WSDLs and schemas here. The supplied files are already included.
+Payload origin is unconfirmed. availability-normalized.xml only adds missing closing tags; it is not independent evidence.
+Do not edit original evidence to make it appear complete. Add newer examples as separate files.
