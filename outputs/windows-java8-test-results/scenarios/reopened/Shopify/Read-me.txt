@@ -1,4 +1,0 @@
-Copilot discovers suitable Shopify APIs from the source evidence.
-If you have a preferred API, paste its URL in chat; Copilot retrieves its details.
-You do not need to curate documentation or internal JSON. See README.md.
-Docs/ and Target-reference.json remain preserved historical references.

@@ -69,9 +69,12 @@ bytes too. The portable suite is also compiled and run on a real local Java 8 ru
 ## Current validation
 
 The simplified endpoint-only workflow has executed **94 portable checks, 0 failures** on
-Corretto Java 1.8.0_382/macOS. The six Windows-only checks are outstanding locally.
-A new Windows CI run is required for this updated JAR. The prior implementation passed
-97 Windows checks in run 36544810524; that is not a result for the new changes.
+Corretto Java 1.8.0_382/macOS. Actual Windows CI executed **100 checks, 0 failures,
+0 outstanding**, including the six Windows-only checks, on Windows Server 2025 /
+Temurin Java 1.8.0_504. [Successful run](https://github.com/pramodpk89/mapping-poc/actions/runs/36545777188)
+executed the shipped JAR/launcher and compiled sources with JDK 8 at
+`257685cd3e99bc1304b9c41af2182b3fb24c43fc`. Later documentation/results commits do not change
+that tested implementation.
 
 Endpoint coverage exercises the single URL file without saved documentation, chat URL
 persistence, target reopening and invalid-URL recovery with the last review preserved.

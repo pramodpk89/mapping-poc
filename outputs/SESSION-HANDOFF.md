@@ -18,7 +18,7 @@ blank still supports source-driven discovery. The helper imports that file, save
 there, removes the duplicate Understanding URL label, and preserves/reopens reviews.
 All prior Shopify docs/config/notes moved unchanged into .framework/references/shopify.
 They are internal evidence, not analyst setup. Three new endpoint regression checks pass.
-The rebuilt JAR passes 94 portable checks on Java 8; Windows rerun pending.
+The rebuilt JAR passes 94 portable checks locally and all 100 checks on Windows, using Java 8.
 
 ## Current real report
 
@@ -58,23 +58,21 @@ Java 1.8, java-home.properties, map.cmd and /map-interface remain. No Python, No
 extra modules, administrator access, execution-policy bypass or live ERP/Shopify writes.
 Original XML/WSDL and saved Shopify docs remain unchanged.
 
-## Previous validation (before endpoint-only update)
+## Validation
 
-New implementation: actual JDK 8 compilation and **91 portable checks passed, 0 failed**
-on macOS/Corretto 1.8.0_382. Actual Windows execution: **97 passed, 0 failed, 0 outstanding**,
-Windows Server 2025 / Temurin Java 1.8.0_504. The JAR and CMD launcher ran; sources compiled
-with JDK 8. Tested implementation: c8196169c2a60239f781bbc6f6a378206e9ea781.
-CI: https://github.com/pramodpk89/mapping-poc/actions/runs/36544810524 .
-Agent discovery is bound to source evidence; changed inputs cannot silently inherit an old
-API recommendation. Downloaded results are in outputs/windows-java8-test-results/.
-Five synthetic workflow scenarios are inspected statically, separately from the real report.
-Browser rendering and Print/PDF remain unverified: browser access was denied because the
-admin-enforced policy could not be verified. No bypass attempted. Actual Copilot pilot remains
-outstanding. Tests must never be used as customer business confirmations.
+Actual local JDK 8 compilation and execution: **94 passed, 0 failed**, Corretto 1.8.0_382
+on macOS; six Windows checks outstanding locally. Actual Windows execution: **100 passed,
+0 failed, 0 outstanding**, Windows Server 2025 / Temurin Java 1.8.0_504. The shipped JAR
+and CMD launcher ran; sources compiled with JDK 8. Tested implementation:
+257685cd3e99bc1304b9c41af2182b3fb24c43fc.
+CI: https://github.com/pramodpk89/mapping-poc/actions/runs/36545777188 .
+Downloaded results: outputs/windows-java8-test-results. Tests use synthetic decisions only.
 
-The real report and five scenarios from each test host passed static inspection. The previous
-ZIP contained 46 files, verified byte-for-byte, including the hidden skill, Java sources, JAR,
-real Report.html and last successful review. Fourteen original references remain unchanged.
-The prior implementation was pushed to main. The endpoint-only update is being validated.
-Use the real Report.html for customer review, not the synthetic test scenarios. Further work
-should focus on analyst business decisions or requested refinements, not resetting proposals.
+The real report and five scenarios from each host passed static HTML/data inspection.
+Browser rendering, Print/PDF and an actual Copilot pilot remain unverified. Browser access
+was previously denied because admin-enforced policy could not be verified; no bypass attempted.
+The rebuilt single ZIP contains 47 files, verified byte-for-byte against the working folder.
+Fourteen original XML/WSDL/Shopify references remain byte-for-byte unchanged after relocation.
+Updated implementation, instructions, report, JAR, ZIP and validation are pushed to main.
+Use the real Report.html for customer review, not synthetic test scenarios. Business purpose,
+WSDL provenance and unresolved business decisions remain unconfirmed.

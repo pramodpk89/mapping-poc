@@ -2,7 +2,7 @@
   "reference_baseline": "19e2fc0",
   "zip_files_verified": 47,
   "preserved_reference_files": 14,
-  "zip_sha256": "fb4c978bf0e83d2857a2f1f30df88d00895ef165a400d9a97ecbdc12f7b539a6",
+  "zip_sha256": "00623b294d32df59ff1f9f59153ef9f8efe562b66ed374b04a009e220609fb35",
   "jar_sha256": "6cf0e4b318fdb0d1306e6b1a3d6e32077d97a85625712efcca587c97e1da3e2e",
   "original_evidence": "byte-for-byte unchanged",
   "single_working_folder": "outputs/copilot-mapping-poc",

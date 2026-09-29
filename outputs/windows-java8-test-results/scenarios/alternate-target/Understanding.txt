@@ -6,8 +6,6 @@ Current flow: ERP -> middleware -> Sitecore
 
 Target flow: ERP -> middleware -> Shopify
 
-Shopify endpoint/reference: https://example.myshopify.com/admin/api/2026-07/graphql.json
-
 Shopify operation: productUpdate
 
 Shopify API version:

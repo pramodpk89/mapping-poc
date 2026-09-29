@@ -7,35 +7,35 @@
       "static_checks": "passed",
       "xml_fields": 7,
       "selected_target_fixture": "inventorySetQuantities",
-      "html_sha256": "3183bfd74f39f543d0101e217458a0d98a6f442a5a1e509724999f4b2ad733d0"
+      "html_sha256": "a1e955da9faacb593c66796348c3544038c67b53ab70df13d8b9a864f96fc771"
     },
     {
       "scenario": "clarified",
       "static_checks": "passed",
       "xml_fields": 7,
       "selected_target_fixture": "inventorySetQuantities",
-      "html_sha256": "c87ea18cd350d75a74003f481347db93840bd244c194d7d11f3f7be700508ce6"
+      "html_sha256": "a430a4b215a90ceb7819f3889b785be5e9d632d4ea388731817dbff22b7a014b"
     },
     {
       "scenario": "reopened",
       "static_checks": "passed",
       "xml_fields": 7,
       "selected_target_fixture": "inventorySetQuantities",
-      "html_sha256": "cc4b142c8b4d30987c887eb6b810c887ff44f5525131c1c8ced80e7de760c785"
+      "html_sha256": "3c21185da6f0f26fe2909fe8387390510072baaab5dc3c52fb3486014cc5c710"
     },
     {
       "scenario": "alternate-target",
       "static_checks": "passed",
       "xml_fields": 7,
       "selected_target_fixture": "productUpdate",
-      "html_sha256": "9ceb78709a39f9bca68516fc077eed6df049d10cddd712d519c63b1b74bbe48a"
+      "html_sha256": "0a10a19717c482a8f9f6cbf03bfc8990fa0c60737e82d04af79c5b7e6432e2ee"
     },
     {
       "scenario": "proposed",
       "static_checks": "passed",
       "xml_fields": 7,
       "selected_target_fixture": "inventorySetQuantities",
-      "html_sha256": "81e5e3c6184ebfd0ae63748e49cda50b4872ccaddadc2bcafe0b6a227bfbec76"
+      "html_sha256": "e295016c2eefa89a794b8a7fb6627d3a98b7e579b529af6b0f95f37a7a7cab16"
     }
   ],
   "visual_browser_review": "Blocked: browser could not verify admin-enforced policy; no bypass attempted",
