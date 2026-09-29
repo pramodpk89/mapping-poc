@@ -1,5 +1,46 @@
 # Mapping POC — session handoff
 
+## Next session: user-reported issues and revised direction
+
+The user requested saving work and starting a new session. **The issues below are not
+fixed yet.** Previous automated test passes do not establish that the report or analyst
+workflow meets the user's expectations. Latest implementation before this note: 8ebac63.
+
+1. **Remove the report's "your answers" feature/section.** The user reports that it is still
+   present and does not save answers. Inspect the actual shipped/generated reports and
+   template, including whether an older report is being opened, without dismissing the
+   issue. Remove answer-entry/display UI, answer counters and associated navigation or
+   misleading save instructions from the HTML. Keep clarification collection in Copilot
+   chat; save those answers to the analyst files and incorporate them on rerun. Unresolved
+   questions may remain a simple read-only list, without suggesting the HTML saves answers.
+2. **Investigate and correct "WSDL attribute" appearing in mappings.** The user objects to
+   what they see in the mapping rows. Trace the displayed fields back to supplied business
+   payload evidence. Do not turn WSDL metadata or service definitions into business mapping
+   attributes, or assume a supplied WSDL is the source contract because of its folder.
+   Current extraction is hardcoded to embedded WebAvailabilityItem; revisit that dependency
+   and source classification. Preserve the original WSDL/XML files. WSDL provenance/role
+   and the real interface purpose remain unconfirmed.
+3. **Simplify Shopify target setup.** For each interface, the analyst supplies the Shopify
+   API endpoint/reference they want to target; the agent should determine relevant request
+   fields, API requirements and mapping from that target and source evidence. Replace the
+   analyst-facing documentation/research setup and mandatory prebuilt research-bundle
+   dependency with this simple input. Do not force inventorySetQuantities or ask analysts
+   to curate documentation or internal JSON. Keep existing docs as reference/archive;
+   do not delete evidence just to simplify the workflow. A generic GraphQL URL alone may
+   not identify an operation: ask only for essential missing operation/version context
+   rather than inventing it. Keep useful official-source citations in the agent's analysis.
+
+Retain Java 1.8 and java-home.properties, the /map-interface workflow, mandatory meaningful
+input checks, evidence-backed decisions, saved chat clarifications, selective reopening,
+read-only HTML and last-successful-review recovery. No Python, Node.js, extra modules,
+administrator access, company-policy bypass or production writes.
+
+Next session should implement these changes, update affected tests/instructions/JAR/ZIP,
+inspect the resulting reports, rerun applicable Java 8 tests (Windows CI is available),
+update this handoff, and push main. Separate real execution from static review and any
+remaining visual/analyst pilot limitations. Never use synthetic decisions as business facts.
+Keep progress updates and the final summary short.
+
 ## Current direction
 
 Repository: https://github.com/pramodpk89/mapping-poc, branch main.
