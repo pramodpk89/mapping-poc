@@ -50,3 +50,18 @@ JAR. Framework code uses Java 8 standard library APIs, safe XML without external
 explicit UTF-8/BOM-aware UTF-16 reading, strict JSON validation, atomic writes and file locks.
 The legacy Python source is archived outside the pack under work/legacy-python solely as
 migration reference. It is not used for setup, runs, tests or packaging the active framework.
+
+## Windows path handling
+
+Use map.cmd on Windows, including when paths contain Unicode. It passes filenames through
+Unicode environment values and launches the JAR with a relative name; passing those same
+paths directly to Java 8's native `-jar` command can lose characters outside the system
+code page. The launcher uses an **existing** short-path alias for the Java folder when one
+is available. It never changes the system's short-name settings. If Java itself is stored
+in a Unicode path on a volume without short aliases, Java 8 may fail to locate java.dll;
+choose a support-approved Java folder with ASCII characters in its path in that situation.
+Spaces are supported. No registry changes or administrator steps are performed.
+
+Git attributes preserve source/documentation bytes across checkouts, because line-ending
+conversion must not silently change the evidence SHA-256 hashes. Pack ZIPs preserve those
+bytes too. The portable suite is also compiled and run on a real local Java 8 runtime.

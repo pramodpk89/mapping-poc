@@ -1055,6 +1055,13 @@ public final class Mapping {
         reopen(old, data, a);
         save(fw.resolve("analysis.json"), a);
         save(fw.resolve("input.json"), data);
+        if (!fingerprint(data).equals(a.get("input_sha256"))) {
+          notice(
+              "Copilot needs to analyse the updated files",
+              list(
+                  "Your clarifications are saved. Copilot must review them before generating the"
+                      + " next mapping report."));
+        }
         return 0;
       } catch (Exception e) {
         notice("Input needs attention", list(e.getMessage()));

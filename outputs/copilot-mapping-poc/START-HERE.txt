@@ -40,7 +40,10 @@ No test decision is a real business confirmation. Live Shopify validation and an
 analyst Copilot pilot remain outstanding.
 
 Support validation
-Double-click Test-Windows.cmd, or run it from Command Prompt after setting java.home.
+Run Test-Windows.cmd from Command Prompt after setting java.home.
 Results are saved under Test-results/Test-results.html, with synthetic example reports.
 It uses temporary copies and does not replace the real analyst's inputs or report.
 The framework's TESTING.md explains the recorded local and Windows test evidence.
+
+If Java cannot find java.dll from a Unicode Java folder, use an approved Java folder
+with ASCII characters in its path. Spaces are fine. See TESTING.md for details.

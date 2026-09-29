@@ -14,6 +14,8 @@ if not exist "%~dp0java-home.properties" goto missing
 for /f "usebackq tokens=1,* delims==" %%A in ("%~dp0java-home.properties") do if "%%A"=="java.home" set "MAPPING_JAVA_HOME=%%B"
 if not defined MAPPING_JAVA_HOME goto missing
 if not exist "%MAPPING_JAVA_HOME%\bin\java.exe" goto invalid
+rem Prefer the existing short path for Java 8's native DLL lookup; never enable short names.
+for %%J in ("%MAPPING_JAVA_HOME%") do set "MAPPING_JAVA_EXE=%%~sJ\bin\java.exe"
 shift
 :options
 if "%~1"=="" goto launch
@@ -45,7 +47,7 @@ goto options
 rem A relative JAR name avoids Java 8's ANSI -jar path conversion on Windows.
 pushd "%MAPPING_PACK%"
 if errorlevel 1 goto failed
-"%MAPPING_JAVA_HOME%\bin\java.exe" -Dfile.encoding=UTF-8 -jar ".framework\mapping.jar" --launcher
+"%MAPPING_JAVA_EXE%" -Dfile.encoding=UTF-8 -jar ".framework\mapping.jar" --launcher
 set "MAPPING_RESULT=%ERRORLEVEL%"
 popd
 chcp %MAPPING_CODEPAGE% >nul

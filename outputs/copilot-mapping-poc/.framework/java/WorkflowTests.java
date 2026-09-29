@@ -1086,6 +1086,22 @@ final class WorkflowTests {
               Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))),
               "Preserved last review");
         });
+    test(
+        "74 Preparing changed input immediately marks current report pending",
+        () -> {
+          prepare();
+          synthetic();
+          generate(0);
+          byte[] last = Files.readAllBytes(m.p("Last-review.html"));
+          eq(m.prepare(map("answers", map("Q03", "Changed synthetic meaning.")), null), 0);
+          String current = Mapping.read(m.p("Report.html"));
+          require(
+              current.contains("Copilot needs to analyse") && !current.contains("mapping-rows"),
+              "Stale review not presented as current");
+          require(
+              Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))),
+              "Preserved historical review");
+        });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(
           "68 Windows CMD launcher with configured Java folder",
