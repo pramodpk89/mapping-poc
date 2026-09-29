@@ -1,3 +1,5 @@
 # Preserve source/reference bytes and SHA-256 evidence across OS checkouts.
 * -text
 *.cmd text eol=crlf
+# CSV uses deliberate CRLF for Excel; retain those bytes without whitespace noise.
+*.csv whitespace=cr-at-eol

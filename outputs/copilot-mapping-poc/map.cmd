@@ -5,6 +5,7 @@ for /f "tokens=2 delims=:" %%C in ('chcp') do set "MAPPING_CODEPAGE=%%C"
 chcp 65001 >nul
 set "MAPPING_JAVA_HOME="
 set "MAPPING_ACTION=%~1"
+set "MAPPING_PACK=%~dp0"
 set "MAPPING_ROOT=%~dp0"
 set "MAPPING_EDITS="
 set "MAPPING_IMPORT="
@@ -42,7 +43,7 @@ shift
 goto options
 :launch
 rem A relative JAR name avoids Java 8's ANSI -jar path conversion on Windows.
-pushd "%~dp0"
+pushd "%MAPPING_PACK%"
 if errorlevel 1 goto failed
 "%MAPPING_JAVA_HOME%\bin\java.exe" -Dfile.encoding=UTF-8 -jar ".framework\mapping.jar" --launcher
 set "MAPPING_RESULT=%ERRORLEVEL%"

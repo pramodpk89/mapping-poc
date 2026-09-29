@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "scenario": "basic",
+      "result": "passed",
+      "mapping_count": 7,
+      "sku_type_status": "needs_input",
+      "inspection": "static HTML structure and embedded data; not browser execution"
+    },
+    {
+      "scenario": "clarified",
+      "result": "passed",
+      "mapping_count": 7,
+      "sku_type_status": "excluded",
+      "inspection": "static HTML structure and embedded data; not browser execution"
+    },
+    {
+      "scenario": "reopened",
+      "result": "passed",
+      "mapping_count": 7,
+      "sku_type_status": "needs_input",
+      "inspection": "static HTML structure and embedded data; not browser execution"
+    }
+  ],
+  "browser_visual_inspection": "Outstanding. Browser tool security policy rejected file URLs. No workaround attempted.",
+  "print_pdf": "Outstanding."
+}
