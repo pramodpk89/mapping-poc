@@ -1,0 +1,221 @@
+{
+  "tests_run": 43,
+  "passed": 43,
+  "tests": [
+    {
+      "test": "test_01_missing_description_blocks",
+      "status": "pass",
+      "description": "First run names the missing purpose instead of producing mappings."
+    },
+    {
+      "test": "test_02_basic_run",
+      "status": "pass",
+      "description": "One business description plus existing evidence produces a seven-field report."
+    },
+    {
+      "test": "test_03_multiline_description",
+      "status": "pass",
+      "description": "A description on the next line is accepted."
+    },
+    {
+      "test": "test_04_utf16_notes",
+      "status": "pass",
+      "description": "Windows UTF-16 notes are read without errors."
+    },
+    {
+      "test": "test_05_unknown_purpose_blocks",
+      "status": "pass",
+      "description": "unknown purpose blocks"
+    },
+    {
+      "test": "test_06_missing_source_blocks",
+      "status": "pass",
+      "description": "missing source blocks"
+    },
+    {
+      "test": "test_07_empty_xml_is_not_evidence",
+      "status": "pass",
+      "description": "empty xml is not evidence"
+    },
+    {
+      "test": "test_08_malformed_sample_with_good_contract",
+      "status": "pass",
+      "description": "malformed sample with good contract"
+    },
+    {
+      "test": "test_09_missing_target_blocks",
+      "status": "pass",
+      "description": "missing target blocks"
+    },
+    {
+      "test": "test_10_unofficial_target_blocks",
+      "status": "pass",
+      "description": "unofficial target blocks"
+    },
+    {
+      "test": "test_11_clarification_preserves_other_answers",
+      "status": "pass",
+      "description": "A second clarification preserves the first and makes old analysis stale."
+    },
+    {
+      "test": "test_12_clearing_answer_is_not_ignored",
+      "status": "pass",
+      "description": "clearing answer is not ignored"
+    },
+    {
+      "test": "test_13_rerun_after_clarification",
+      "status": "pass",
+      "description": "rerun after clarification"
+    },
+    {
+      "test": "test_14_changed_decision_reopens_old_confirmation",
+      "status": "pass",
+      "description": "changed decision reopens old confirmation"
+    },
+    {
+      "test": "test_15_conflicting_decisions_allow_discovery_not_confirmation",
+      "status": "pass",
+      "description": "conflicting decisions allow discovery not confirmation"
+    },
+    {
+      "test": "test_16_excel_semicolon_and_quoted_comma",
+      "status": "pass",
+      "description": "excel semicolon and quoted comma"
+    },
+    {
+      "test": "test_17_bad_csv_columns_blocks",
+      "status": "pass",
+      "description": "bad csv columns blocks"
+    },
+    {
+      "test": "test_18_no_invented_reviewer",
+      "status": "pass",
+      "description": "no invented reviewer"
+    },
+    {
+      "test": "test_19_unknown_is_not_an_answer",
+      "status": "pass",
+      "description": "unknown is not an answer"
+    },
+    {
+      "test": "test_20_missing_field_rejected",
+      "status": "pass",
+      "description": "missing field rejected"
+    },
+    {
+      "test": "test_21_duplicate_field_rejected",
+      "status": "pass",
+      "description": "duplicate field rejected"
+    },
+    {
+      "test": "test_22_unknown_evidence_rejected",
+      "status": "pass",
+      "description": "unknown evidence rejected"
+    },
+    {
+      "test": "test_23_blank_source_fields_rejected",
+      "status": "pass",
+      "description": "blank source fields rejected"
+    },
+    {
+      "test": "test_24_source_type_mismatch_rejected",
+      "status": "pass",
+      "description": "source type mismatch rejected"
+    },
+    {
+      "test": "test_25_changed_source_invalidates_report",
+      "status": "pass",
+      "description": "changed source invalidates report"
+    },
+    {
+      "test": "test_26_last_review_survives_failure",
+      "status": "pass",
+      "description": "last review survives failure"
+    },
+    {
+      "test": "test_27_html_answer_roundtrip",
+      "status": "pass",
+      "description": "A report-export-shaped JSON file imports into analyst documents and reruns."
+    },
+    {
+      "test": "test_28_stale_import_does_not_overwrite_newer_notes",
+      "status": "pass",
+      "description": "stale import does not overwrite newer notes"
+    },
+    {
+      "test": "test_29_foreign_interface_import_rejected",
+      "status": "pass",
+      "description": "foreign interface import rejected"
+    },
+    {
+      "test": "test_30_no_internal_only_clarification",
+      "status": "pass",
+      "description": "Refreshing a hash cannot hide a made-up answer absent from analyst files."
+    },
+    {
+      "test": "test_31_resolved_question_needs_review_note",
+      "status": "pass",
+      "description": "resolved question needs review note"
+    },
+    {
+      "test": "test_32_html_injection_is_inert",
+      "status": "pass",
+      "description": "html injection is inert"
+    },
+    {
+      "test": "test_33_working_directory_and_spaces",
+      "status": "pass",
+      "description": "working directory and spaces"
+    },
+    {
+      "test": "test_34_boolean_settings_must_be_boolean",
+      "status": "pass",
+      "description": "boolean settings must be boolean"
+    },
+    {
+      "test": "test_35_duplicate_question_ids_rejected",
+      "status": "pass",
+      "description": "duplicate question ids rejected"
+    },
+    {
+      "test": "test_36_original_evidence_preserved",
+      "status": "pass",
+      "description": "original evidence preserved"
+    },
+    {
+      "test": "test_37_ready_field_with_business_confirmation",
+      "status": "pass",
+      "description": "A supported field can become ready while overall interface gates remain open."
+    },
+    {
+      "test": "test_38_ready_requires_target_choice",
+      "status": "pass",
+      "description": "ready requires target choice"
+    },
+    {
+      "test": "test_39_new_contract_field_requires_new_mapping",
+      "status": "pass",
+      "description": "new contract field requires new mapping"
+    },
+    {
+      "test": "test_40_unknown_question_does_not_erase_answers",
+      "status": "pass",
+      "description": "unknown question does not erase answers"
+    },
+    {
+      "test": "test_41_unicode_multiline_and_shell_characters_preserved",
+      "status": "pass",
+      "description": "unicode multiline and shell characters preserved"
+    },
+    {
+      "test": "test_42_missing_framework_setting_reports_actionable_error",
+      "status": "pass",
+      "description": "missing framework setting reports actionable error"
+    },
+    {
+      "test": "test_43_status_change_cannot_keep_old_explanation",
+      "status": "pass",
+      "description": "status change cannot keep old explanation"
+    }
+  ]
+}

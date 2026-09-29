@@ -1,0 +1,2 @@
+Put existing Sitecore payloads, mappings and notes here if available.
+No confirmed Sitecore transformation was supplied for this example. Missing target details are an open question, not a reason to invent rules.

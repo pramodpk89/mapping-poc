@@ -1,0 +1,9 @@
+Interface name: GetWebItemAvailability
+What this interface does: [Please add one sentence describing the business purpose]
+
+Current flow: ERP -> middleware -> Sitecore
+Target flow: ERP -> middleware -> Shopify
+Payload origin: Unknown
+
+Additional context:
+Add your current understanding, examples and corrections here. Unknown business rules can remain unknown.

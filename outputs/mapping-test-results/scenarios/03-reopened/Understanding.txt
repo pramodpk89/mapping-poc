@@ -1,0 +1,13 @@
+Interface name: GetWebItemAvailability
+
+What this interface does: TEST: provide availability information to ecommerce.
+
+Current flow: ERP -> middleware -> Sitecore
+
+Target flow: ERP -> middleware -> Shopify
+
+Payload origin: Unknown
+
+Reviewer: 
+
+Additional context: Add your current understanding, examples and corrections here. Unknown business rules can remain unknown.

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "interface": {
+    "id": "new-interface",
+    "name": "",
+    "description": "",
+    "current_flow": "ERP → middleware → Sitecore",
+    "target_flow": "ERP → middleware → Shopify",
+    "source_origin": "unknown",
+    "reviewer": ""
+  },
+  "source": {
+    "contracts": [],
+    "sample": "",
+    "normalized_sample": "",
+    "fields": [],
+    "normalization_note": ""
+  },
+  "target": {
+    "platform": "Shopify",
+    "api_version": "2026-07",
+    "research_method": "official_public_documentation",
+    "selected_operation": null
+  },
+  "known_rules": [],
+  "answers": {},
+  "additional_context": ""
+}

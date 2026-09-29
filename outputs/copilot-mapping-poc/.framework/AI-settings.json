@@ -1,0 +1,9 @@
+{
+  "execution_mode": "github_copilot_vscode",
+  "provider": "managed_by_github_copilot",
+  "model": "selected_in_copilot",
+  "credentials": "managed_by_github_copilot",
+  "api_key_required": false,
+  "actual_model": "record_if_exposed_otherwise_unknown",
+  "note": "This describes the execution mode; it does not change Copilot model settings."
+}

@@ -1,0 +1,65 @@
+test_01_missing_description_blocks (__main__.WorkflowTests)
+First run names the missing purpose instead of producing mappings. ... ok
+test_02_basic_run (__main__.WorkflowTests)
+One business description plus existing evidence produces a seven-field report. ... ok
+test_03_multiline_description (__main__.WorkflowTests)
+A description on the next line is accepted. ... ok
+test_04_utf16_notes (__main__.WorkflowTests)
+Windows UTF-16 notes are read without errors. ... ok
+test_05_unknown_purpose_blocks (__main__.WorkflowTests) ... ok
+test_06_missing_source_blocks (__main__.WorkflowTests) ... ok
+test_07_empty_xml_is_not_evidence (__main__.WorkflowTests) ... ok
+test_08_malformed_sample_with_good_contract (__main__.WorkflowTests) ... ok
+test_09_missing_target_blocks (__main__.WorkflowTests) ... ok
+test_10_unofficial_target_blocks (__main__.WorkflowTests) ... ok
+test_11_clarification_preserves_other_answers (__main__.WorkflowTests)
+A second clarification preserves the first and makes old analysis stale. ... ok
+test_12_clearing_answer_is_not_ignored (__main__.WorkflowTests) ... ok
+test_13_rerun_after_clarification (__main__.WorkflowTests) ... ok
+test_14_changed_decision_reopens_old_confirmation (__main__.WorkflowTests) ... ok
+test_15_conflicting_decisions_allow_discovery_not_confirmation (__main__.WorkflowTests) ... ok
+test_16_excel_semicolon_and_quoted_comma (__main__.WorkflowTests) ... ok
+test_17_bad_csv_columns_blocks (__main__.WorkflowTests) ... ok
+test_18_no_invented_reviewer (__main__.WorkflowTests) ... ok
+test_19_unknown_is_not_an_answer (__main__.WorkflowTests) ... ok
+test_20_missing_field_rejected (__main__.WorkflowTests) ... ok
+test_21_duplicate_field_rejected (__main__.WorkflowTests) ... ok
+test_22_unknown_evidence_rejected (__main__.WorkflowTests) ... ok
+test_23_blank_source_fields_rejected (__main__.WorkflowTests) ... ok
+test_24_source_type_mismatch_rejected (__main__.WorkflowTests) ... ok
+test_25_changed_source_invalidates_report (__main__.WorkflowTests) ... ok
+test_26_last_review_survives_failure (__main__.WorkflowTests) ... ok
+test_27_html_answer_roundtrip (__main__.WorkflowTests)
+A report-export-shaped JSON file imports into analyst documents and reruns. ... ok
+test_28_stale_import_does_not_overwrite_newer_notes (__main__.WorkflowTests) ... ok
+test_29_foreign_interface_import_rejected (__main__.WorkflowTests) ... ok
+test_30_no_internal_only_clarification (__main__.WorkflowTests)
+Refreshing a hash cannot hide a made-up answer absent from analyst files. ... ok
+test_31_resolved_question_needs_review_note (__main__.WorkflowTests) ... ok
+test_32_html_injection_is_inert (__main__.WorkflowTests) ... ok
+test_33_working_directory_and_spaces (__main__.WorkflowTests) ... ok
+test_34_boolean_settings_must_be_boolean (__main__.WorkflowTests) ... ok
+test_35_duplicate_question_ids_rejected (__main__.WorkflowTests) ... ok
+test_36_original_evidence_preserved (__main__.WorkflowTests) ... ok
+test_37_ready_field_with_business_confirmation (__main__.WorkflowTests)
+A supported field can become ready while overall interface gates remain open. ... ok
+test_38_ready_requires_target_choice (__main__.WorkflowTests) ... ok
+test_39_new_contract_field_requires_new_mapping (__main__.WorkflowTests) ... FAIL
+test_40_unknown_question_does_not_erase_answers (__main__.WorkflowTests) ... ok
+test_41_unicode_multiline_and_shell_characters_preserved (__main__.WorkflowTests) ... ok
+test_42_missing_framework_setting_reports_actionable_error (__main__.WorkflowTests) ... ok
+
+======================================================================
+FAIL: test_39_new_contract_field_requires_new_mapping (__main__.WorkflowTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/pramodp/Documents/Codex/2026-09-29/basi/outputs/copilot-mapping-poc/.framework/tests/test_workflow.py", line 202, in test_39_new_contract_field_requires_new_mapping
+    self.synthetic_analysis();self.generate(2)
+  File "/Users/pramodp/Documents/Codex/2026-09-29/basi/outputs/copilot-mapping-poc/.framework/tests/test_workflow.py", line 40, in generate
+    r=self.run_script('generate_report.py');self.assertEqual(r.returncode,code,r.stdout+r.stderr)
+AssertionError: 3 != 2 : 
+
+----------------------------------------------------------------------
+Ran 42 tests in 9.278s
+
+FAILED (failures=1)

@@ -1,0 +1,9 @@
+{
+  "execution_mode": "claude_cowork",
+  "provider": "Anthropic",
+  "model": "selected_in_cowork",
+  "credentials": "managed_by_cowork",
+  "api_key_required": false,
+  "actual_model": "record_if_exposed_otherwise_unknown",
+  "note": "This describes the execution mode; it does not change Cowork model settings."
+}

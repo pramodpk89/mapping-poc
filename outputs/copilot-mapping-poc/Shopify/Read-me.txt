@@ -1,0 +1,2 @@
+Copilot stores official Shopify API research here. Add target requirements or store-specific notes if you know them.
+The included research is for API version 2026-07, retrieved 2026-09-29. Inventory updates remain a candidate.

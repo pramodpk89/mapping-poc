@@ -1,0 +1,42 @@
+RUN THIS INTERFACE WITH GITHUB COPILOT
+
+One-time setup
+Ask your support team to provide VS Code, GitHub Copilot access with Agent capabilities,
+and Python 3.9 or newer. Sign in to Copilot. This pack does not need an API key.
+
+Each run
+1. Extract this folder and open the whole folder in VS Code (File > Open Folder).
+2. Have one sentence ready describing the business purpose. Source payloads and WSDLs are already included.
+3. In Copilot Chat, select Agent mode and type /map-interface. Choose the skill and send.
+4. Tell Copilot the business purpose when prompted. It saves your answer, checks the files,
+   analyses the mapping and saves Report.html. You can also add the purpose in Understanding.txt.
+5. Open Report.html in your browser. If required information is missing, it lists what to add.
+
+For the next review, simply tell Copilot your clarification and run /map-interface again.
+Copilot saves it in the right file. You can also update Understanding.txt, Questions.txt
+or Decisions.csv (Excel). The HTML report is read-only: give new answers and corrections
+in Copilot chat, then run /map-interface again. You do not need to edit JSON or run Python
+yourself. Last-review.html preserves your last completed review if a rerun fails.
+
+If /map-interface is not listed, ensure the folder containing .github is open and your
+VS Code/Copilot setup supports skills. Fallback: tell Copilot in Agent mode,
+"Read RUN.md and generate Report.html for this interface."
+
+Folders
+Current/Source: ERP or middleware source evidence; origin may remain unconfirmed.
+Current/Target: existing Sitecore details and mappings, if available.
+Shopify: target requirements and official API references.
+.github and .framework: maintained by the framework owner, not analysts.
+
+Model selection and authentication are handled by Copilot. .framework/AI-settings.json
+records that choice of execution mode; changing that file does not switch the chat model.
+
+The supplied example intentionally needs one sentence of business purpose before it runs.
+Unknown attribute rules can remain blank and become questions in the mapping report.
+
+Validation: 43 automated checks passed, plus browser checks of three review scenarios.
+Actual Windows/Copilot execution
+and skill discovery still need to be verified in your organization's setup.
+
+Official skill documentation:
+https://code.visualstudio.com/docs/agent-customization/agent-skills
