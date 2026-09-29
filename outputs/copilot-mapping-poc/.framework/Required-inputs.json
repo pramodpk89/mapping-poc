@@ -5,5 +5,5 @@
   "unknown_attribute_rules": "allow_analysis_but_block_affected_mappings",
   "missing_current_target_details": "allow_and_flag",
   "missing_model_name": "record_unknown",
-  "missing_python_runtime": "stop_and_explain"
+  "missing_java8_runtime": "stop_and_explain"
 }

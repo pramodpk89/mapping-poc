@@ -1,0 +1,8 @@
+Attribute,Decision,Explanation,Confirmed by
+"AvailableDate","","",""
+"AvailableDateRange","","",""
+"AvailableQuantity","","",""
+"InStock","","",""
+"SKU","","",""
+"WebProductId","","",""
+"SKUType","Keep SKUType; classification is unclear.","Synthetic fixture only.",""

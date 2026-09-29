@@ -1,0 +1,58 @@
+[
+  {
+    "id": "set-quantities",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/mutations/inventorySetQuantities",
+    "retrieved_on": "2026-09-29",
+    "sha256": "f1399f2ddc8520ba2bede3e1c31ea2eb83efc633ce0274ab60f2b33ddfc043f0",
+    "bytes": 38421
+  },
+  {
+    "id": "set-input",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/input-objects/InventorySetQuantitiesInput",
+    "retrieved_on": "2026-09-29",
+    "sha256": "827a15d58b7e4b89bd0e34a04f5761f7c6328d35607c00ac088de4085df2b65d",
+    "bytes": 2748
+  },
+  {
+    "id": "quantity-input",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/input-objects/InventoryQuantityInput",
+    "retrieved_on": "2026-09-29",
+    "sha256": "d4b78f752d01e657b5492c941b5a60f72a726bed91d7f538c5b1a803827ec4c2",
+    "bytes": 2545
+  },
+  {
+    "id": "items",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/queries/inventoryItems",
+    "retrieved_on": "2026-09-29",
+    "sha256": "b543a030173c9044fc8a78846dc39c1a15139b56109cc040fc3b3fcdea77a356",
+    "bytes": 24832
+  },
+  {
+    "id": "locations",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/queries/locations",
+    "retrieved_on": "2026-09-29",
+    "sha256": "cda672b7c186b75ddf4ab042c179979d622ec7f59165f716df94d68d49ecac7f",
+    "bytes": 10522
+  },
+  {
+    "id": "storefront-variant",
+    "url": "https://shopify.dev/docs/api/storefront/latest/objects/ProductVariant",
+    "retrieved_on": "2026-09-29",
+    "sha256": "8bb03d67d6bc7ae28e5cf0f3467343801dccf0a899e4f3c38f11cf9549c93697",
+    "bytes": 14899
+  },
+  {
+    "id": "metafields",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/mutations/metafieldsSet",
+    "retrieved_on": "2026-09-29",
+    "sha256": "3e26d403db880836b0faf56e6b02ecededae258be83bbef99f97b073efa5f9e2",
+    "bytes": 38146
+  },
+  {
+    "id": "activation",
+    "url": "https://shopify.dev/docs/api/admin-graphql/latest/mutations/inventoryActivate",
+    "retrieved_on": "2026-09-29",
+    "sha256": "690341d8a21d1dd0bca4cec3b1249d7fa4c4e0e3a9c89126bbd25606ce418aa8",
+    "bytes": 44345
+  }
+]

@@ -1,15 +1,1 @@
-{
-  "status": "blocked",
-  "checked_at": "2026-09-29T06:31:10.532269+00:00",
-  "missing": [
-    "Understanding.txt: replace the placeholder after “What this interface does:” with the business purpose. One sentence is enough."
-  ],
-  "warnings": [
-    "availability-excerpt.xml: incomplete or invalid structured file; kept as supplementary evidence.",
-    "checkout-2.wsdl: imports external schemas; not used as the sole parseable contract."
-  ],
-  "usable_source_files": [
-    "Current/Source/checkout-1.wsdl"
-  ],
-  "human_inputs_sha256": "f86370281da0f792ce9764739b3ec433b1ce1d4b2948d1785592d6ac4007adbb"
-}
+{"checked_at":"2026-09-29T07:14:49.891Z","human_inputs_sha256":"7a3aeae50e4310da1e55343a7838d9e0d547bdb34603856033f0105522f5abb7","missing":["Understanding.txt: provide one sentence describing the business purpose after What this interface does:."],"status":"blocked","usable_source_files":["Current/Source/checkout-1.wsdl"],"warnings":["WSDL provenance and role remain unconfirmed. Folder placement and a parseable schema do not establish the source of this interface.","availability-excerpt.xml: incomplete, invalid or DTD-bearing structured file; kept as supplementary evidence.","checkout-2.wsdl: imports external schemas; not used as sole parseable contract."]}

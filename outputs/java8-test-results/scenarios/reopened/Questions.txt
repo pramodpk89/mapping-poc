@@ -1,0 +1,39 @@
+QUESTIONS FOR THE ANALYST
+Leave unknown answers blank. Copilot updates the report after reviewing your answers.
+
+Q01: What should Shopify do with this feed?
+Update sellable stock, display delivery/availability information, or both?
+Answer:
+
+Q02: Where is this XML produced?
+ERP, middleware, Sitecore, or an export? Please also provide a complete response if available.
+Answer:
+
+Q03: What does AvailableQuantity represent?
+Is this an absolute total or a change? Sellable stock or physical stock? Which system owns it?
+Answer:
+
+Q04: Which location does the quantity belong to?
+One warehouse/location, a combined total, or separate values elsewhere?
+Answer:
+
+Q05: How do these identifiers match Shopify?
+Does SKU match the Shopify SKU? Can duplicates exist? What does WebProductId identify?
+Answer:
+
+Q06: What do the availability dates mean?
+Meaning of 2049-12-31, timezone, empty date range, and whether customers should see these values.
+Answer: Synthetic unrelated date answer.
+
+Q07: What controls InStock?
+Is it derived from quantity, or does it include backorders, fulfilment or other rules?
+Answer:
+
+Q08: What does SKUType mean?
+Please explain N, other possible values and any special processing.
+Answer: SYNTHETIC: N is normal stock; do not send this attribute.
+
+Q09: How is the feed delivered?
+Schedule or event? Full snapshot or partial feed? What should happen to missing, duplicate, late or failed records?
+Answer:
+

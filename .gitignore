@@ -6,3 +6,10 @@ venv/
 .env
 .env.*
 !.env.example
+*.class
+outputs/copilot-mapping-poc/.framework/build/
+outputs/copilot-mapping-poc/.framework/history/
+outputs/copilot-mapping-poc/.framework/run.lock
+outputs/copilot-mapping-poc/.framework/run-history.jsonl
+outputs/copilot-mapping-poc/.framework/clarifications.json
+outputs/copilot-mapping-poc/Test-results/

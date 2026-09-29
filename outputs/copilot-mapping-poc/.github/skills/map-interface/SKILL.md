@@ -13,7 +13,7 @@ as the entry point; do not bypass the required-input check or guarded generator.
 
 ## Read and analyse
 
-Read the analyst's files and `.framework/schemas/`. Use `.framework/prepare_run.py` to import
+Read the analyst's files and `.framework/schemas/`. Use `map.cmd prepare` to import
 those files into input.json; analysts do not maintain JSON themselves. Accept clarifications
 in chat, record them using that helper, and continue the run without requesting duplicate entry.
 Treat newer contradictory input as a reason to reopen the affected decision, not merely
@@ -49,8 +49,19 @@ Write questions in business language. Update Questions.txt without removing exis
 After reviewing an answer, use question.review_status and resolution_note so the regenerated
 report distinguishes reviewed answers from those still awaiting analysis.
 Preserve or reopen earlier decisions according to new evidence. Record changes and limitations.
-Use the freshness hashes and `.framework/generate_report.py` exactly as RUN.md describes.
+Use the freshness hashes and `map.cmd generate` exactly as RUN.md describes.
 Return the HTML link with a concise summary; keep implementation mechanics out of the analyst's flow.
 
 The helper scripts validate and render; the connected AI assistant performs the analysis.
 Do not ask for model credentials or perform ERP/Shopify writes for this mapping workflow.
+
+## Java 8 execution
+
+Use the configured Java 1.8 folder from java-home.properties and the supplied map.cmd/JAR.
+Record chat text in a structured clarification JSON data file and pass its filename to
+`map.cmd prepare --edits`; do not embed analyst text in shell commands. Follow RUN.md for
+all options, exit codes and freshness checks. No Python, Node.js or PowerShell helpers.
+Do not install runtimes or bypass company policies. Report missing or blocked Java setup.
+Decision evidence notes must quote the exact current statement from input.known_rules and
+link to Decisions.csv. Never reuse a synthetic test purpose, answer or decision as fact.
+WSDL provenance and role remain unconfirmed; structure extraction does not confirm origin.

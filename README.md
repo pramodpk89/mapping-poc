@@ -1,35 +1,29 @@
 # Integration mapping POC
 
-**Current blocker:** the team's Windows machines have no Python. This version still requires Python; a compatible execution path is the next task. See the [session handoff](outputs/SESSION-HANDOFF.md).
+The active framework runs on **Java 1.8** with no external libraries. Set the approved Java
+folder in [java-home.properties](outputs/copilot-mapping-poc/java-home.properties); a JRE is
+sufficient. No Python, Node.js, PowerShell helpers, compiler or admin access is needed by
+analysts. Company application controls must permit the supplied CMD launcher and JAR.
 
-AI-assisted mapping from ERP/middleware source evidence to Shopify, starting with item availability. Functional analysts supply payloads, WSDLs, their understanding, and attribute decisions. The workflow produces a read-only HTML mapping report with evidence and unresolved questions.
+1. Download the [Copilot pack ZIP](outputs/copilot-mapping-poc.zip) and extract it.
+2. Set `java.home` and open `copilot-mapping-poc` as the folder in VS Code.
+3. Follow [START-HERE.txt](outputs/copilot-mapping-poc/START-HERE.txt), then send
+   `/map-interface` in Copilot Agent mode. Give clarifications in chat and rerun.
 
-## Start here
+Reports are read-only HTML. Mandatory input/evidence checks block incomplete runs. A changed
+decision reopens affected mappings and preserves unrelated answers. Last-review.html retains
+the last successful review through failed reruns. The real business purpose and the supplied
+WSDLs' role/provenance remain **unconfirmed**. All test/demo decisions are synthetic.
 
-1. Download or clone this repository.
-2. Open **`outputs/copilot-mapping-poc`** as the folder in VS Code so Copilot can discover its skill.
-3. Follow [START-HERE.txt](outputs/copilot-mapping-poc/START-HERE.txt). The setup requires Copilot Agent capabilities and Python 3.9 or newer.
-4. Run `/map-interface` in Copilot chat. Give clarifications in chat and rerun to generate a new report.
+- [Workflow](outputs/copilot-mapping-poc/RUN.md) and [testing/build guide](outputs/copilot-mapping-poc/TESTING.md).
+- [Java 8 local test results](outputs/java8-test-results/Test-results.html), with generated review scenarios.
+- [Shopify reference](outputs/copilot-mapping-poc/Shopify/README.md): eight saved official pages.
+- [Updated session handoff](outputs/SESSION-HANDOFF.md).
 
-The HTML is read-only; typing into a report does not trigger an AI run. The current example requires a business-purpose statement before its mapping run can proceed. Unknown attribute rules remain open questions.
+Open downloaded HTML in a browser; GitHub's file view displays source. Earlier
+`availability-poc`, `cowork-mapping-poc` and `mapping-test-results` are historical prototypes
+and evidence. Legacy Python helpers are archived in `work/legacy-python`, outside the active
+pack. The Java migration supersedes the earlier PowerShell plan at the user's request.
 
-## Contents
-
-- [Current Copilot pack](outputs/copilot-mapping-poc/) and [ZIP download](outputs/copilot-mapping-poc.zip).
-- [Shopify target and documentation](outputs/copilot-mapping-poc/Shopify/README.md): readable API overview and eight saved official documentation pages.
-- [Test results](outputs/mapping-test-results/Test-results.html), including three synthetic scenarios: initial mapping, clarifications, and a corrected decision.
-- [Workflow regression tests](outputs/copilot-mapping-poc/.framework/tests/test_workflow.py).
-- `outputs/availability-poc` and `outputs/cowork-mapping-poc`: earlier prototypes retained for reference. Use the Copilot pack for current work.
-- `work/`: development scripts and captured Shopify research.
-
-Download or open HTML files locally in a browser; GitHub's file view displays their source.
-
-## Validation status
-
-43 automated checks passed. Browser checks cover the read-only reports and mapping filters. Synthetic analysis fixtures validate workflow behavior, not model reasoning. A real Windows + Copilot pilot and live Shopify validation remain outstanding. No ERP or Shopify writes have been executed.
-
-Run the local regression suite from the repository root:
-
-```sh
-python -m unittest discover -s outputs/copilot-mapping-poc/.framework/tests -p "test_*.py"
-```
+A real analyst Copilot pilot and live Shopify validation remain outstanding. No ERP or
+Shopify writes are performed by this framework.

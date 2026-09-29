@@ -1,46 +1,46 @@
-RUN THIS INTERFACE WITH GITHUB COPILOT
-
-CURRENT LIMITATION: the team's Windows machines have no Python. This pack still
-requires Python and is not ready for that environment. A replacement execution
-path is pending; do not treat the setup below as already available to the team.
+RUN THIS INTERFACE WITH GITHUB COPILOT + JAVA 1.8
 
 One-time setup
-Ask your support team to provide VS Code, GitHub Copilot access with Agent capabilities,
-and Python 3.9 or newer. Sign in to Copilot. This pack does not need an API key.
+1. Use your support team's approved VS Code, GitHub Copilot Agent access and Java 1.8.
+   An existing Java 8 JRE or JDK folder is sufficient. No compiler, Python, Node.js,
+   PowerShell scripts, extra modules or administrator access are required by this pack.
+2. Extract the ZIP to a local writable folder. Open java-home.properties in a text editor.
+   Set java.home to the Java 1.8 folder containing bin\java.exe, for example:
+   java.home=C:\Program Files\Java\jre1.8.0_XXX
+   Use your real folder. No surrounding quotes or doubled backslashes. Save as UTF-8.
+   This setting applies only to this pack; it does not change your machine's Java setup.
+3. Open the whole extracted copilot-mapping-poc folder in VS Code and sign in to Copilot.
+   No separate AI API key is needed. Company policies still apply. If execution is blocked,
+   ask support for an approved deployment; do not bypass execution or application policies.
 
 Each run
-1. Extract this folder and open the whole folder in VS Code (File > Open Folder).
-2. Have one sentence ready describing the business purpose. Source payloads and WSDLs are already included.
-3. In Copilot Chat, select Agent mode and type /map-interface. Choose the skill and send.
-4. Tell Copilot the business purpose when prompted. It saves your answer, checks the files,
-   analyses the mapping and saves Report.html. You can also add the purpose in Understanding.txt.
-5. Open Report.html in your browser. If required information is missing, it lists what to add.
+1. Have one sentence describing the interface's business purpose ready.
+2. In Copilot Chat, select Agent mode and send /map-interface.
+3. Give Copilot the purpose and clarifications in chat. It saves them, checks the inputs,
+   analyses the mapping and generates Report.html. Missing inputs block the run.
+4. Open Report.html in your browser. Give corrections in chat and run /map-interface again.
 
-For the next review, simply tell Copilot your clarification and run /map-interface again.
-Copilot saves it in the right file. You can also update Understanding.txt, Questions.txt
-or Decisions.csv (Excel). The HTML report is read-only: give new answers and corrections
-in Copilot chat, then run /map-interface again. You do not need to edit JSON or run Python
-yourself. Last-review.html preserves your last completed review if a rerun fails.
+The report is read-only. Unrelated answers are preserved when a decision changes.
+Last-review.html retains the last completed review if a later run fails; it may be outdated.
+You do not need to edit JSON or type commands. Understanding.txt, Questions.txt and
+Decisions.csv remain available if you prefer editing the human-readable files directly.
 
 If /map-interface is not listed, ensure the folder containing .github is open and your
-VS Code/Copilot setup supports skills. Fallback: tell Copilot in Agent mode,
+VS Code/Copilot setup supports skills. Fallback in Agent mode:
 "Read RUN.md and generate Report.html for this interface."
 
 Folders
-Current/Source: ERP or middleware source evidence; origin may remain unconfirmed.
+Current/Source: supplied evidence. The WSDLs' role and origin are NOT confirmed.
 Current/Target: existing Sitecore details and mappings, if available.
-Shopify: target requirements and official API references.
-.github and .framework: maintained by the framework owner, not analysts.
+Shopify: saved target requirements and official API documentation.
+.github and .framework: maintained by the framework owner.
 
-Model selection and authentication are handled by Copilot. .framework/AI-settings.json
-records that choice of execution mode; changing that file does not switch the chat model.
+The real business purpose is still a placeholder. All demo/test answers are synthetic.
+No test decision is a real business confirmation. Live Shopify validation and an actual
+analyst Copilot pilot remain outstanding.
 
-The supplied example intentionally needs one sentence of business purpose before it runs.
-Unknown attribute rules can remain blank and become questions in the mapping report.
-
-Validation: 43 automated checks passed, plus browser checks of three review scenarios.
-Actual Windows/Copilot execution
-and skill discovery still need to be verified in your organization's setup.
-
-Official skill documentation:
-https://code.visualstudio.com/docs/agent-customization/agent-skills
+Support validation
+Double-click Test-Windows.cmd, or run it from Command Prompt after setting java.home.
+Results are saved under Test-results/Test-results.html, with synthetic example reports.
+It uses temporary copies and does not replace the real analyst's inputs or report.
+The framework's TESTING.md explains the recorded local and Windows test evidence.
