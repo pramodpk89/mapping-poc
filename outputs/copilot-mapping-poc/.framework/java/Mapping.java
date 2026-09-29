@@ -544,6 +544,8 @@ public final class Mapping {
             warnings,
             "usable_source_files",
             usable,
+            "source_evidence_sha256",
+            sourceFingerprint(),
             "human_inputs_sha256",
             fingerprint(hashes));
     save(fw.resolve("preflight.json"), result);
@@ -782,12 +784,21 @@ public final class Mapping {
     }
   }
 
+  String sourceFingerprint() throws Exception {
+    Map<String, Object> hashes = map();
+    for (Path file : files(p("Current/Source")))
+      hashes.put(root.relativize(file).toString().replace(File.separatorChar, (char)47), hash(Files.readAllBytes(file)));
+    return fingerprint(hashes);
+  }
+
   Map<String, Object> targetInput(Map<String, Object> u) throws Exception {
+
     String requested = str(u.get("shopify endpoint/reference")).trim(), reference = requested;
     Map<String, Object> discovered = map();
     if (Files.isRegularFile(fw.resolve("target-discovery.json"))) {
       Map<String, Object> value = load("target-discovery.json");
-      if (requested.equals(str(value.get("requested_reference")))) discovered = value;
+      if (requested.equals(str(value.get("requested_reference")))
+          && sourceFingerprint().equals(value.get("source_sha256"))) discovered = value;
     }
     if (unknown(reference)) reference = str(discovered.get("reference"));
     if (unknown(reference)) return map("platform", "Shopify", "endpoint_reference", "",

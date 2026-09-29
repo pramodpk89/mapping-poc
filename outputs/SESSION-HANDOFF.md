@@ -51,7 +51,7 @@ Original XML/WSDL and saved Shopify docs remain unchanged.
 
 ## Validation
 
-New implementation: actual JDK 8 compilation and **90 portable checks passed, 0 failed**
+New implementation: actual JDK 8 compilation and **91 portable checks passed, 0 failed**
 on macOS/Corretto 1.8.0_382. Six Windows-only checks await the new Windows CI run.
 Previous 89-check Windows results do not validate this changed implementation.
 Five synthetic workflow scenarios are inspected statically, separately from the real report.

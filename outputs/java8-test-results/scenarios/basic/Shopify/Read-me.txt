@@ -1,5 +1,4 @@
-Supply the intended Shopify API endpoint/reference in Copilot chat. Copilot inspects it
-and determines request fields, requirements and proposed XML field mappings.
-Only essential missing operation/version details need clarification. See README.md.
-Docs/ and Target-reference.json are preserved historical references, not mandatory inputs.
-No operation, including inventorySetQuantities, is selected by default.
+Copilot discovers suitable Shopify APIs from the source evidence.
+If you have a preferred API, paste its URL in chat; Copilot retrieves its details.
+You do not need to curate documentation or internal JSON. See README.md.
+Docs/ and Target-reference.json remain preserved historical references.

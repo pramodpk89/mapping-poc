@@ -5,5 +5,6 @@
   "api_version": "2026-07",
   "reason": "Agent recommendation from the actual XML: per-SKU AvailableQuantity and InStock values suggest an availability snapshot. Absolute quantity writes are a conditional design proposal, not confirmed source authority. Supplementary metafields preserve availability text and external identifiers.",
   "retrieved_on": "2026-09-29",
-  "business_confirmation": false
+  "business_confirmation": false,
+  "source_sha256": "c66c8d863a8ce95ae3d0a98fc625eba8516dce406b6400f643daf3e2a6c386ea"
 }

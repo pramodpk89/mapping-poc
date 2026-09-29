@@ -68,7 +68,7 @@ bytes too. The portable suite is also compiled and run on a real local Java 8 ru
 
 ## Current validation
 
-The new source-first workflow has executed **90 portable checks, 0 failures** on
+The new source-first workflow has executed **91 portable checks, 0 failures** on
 Corretto Java 1.8.0_382/macOS. Six Windows-only checks are pending in the new CI run.
 The preceding 89-check Windows result does not establish validation of this implementation.
 

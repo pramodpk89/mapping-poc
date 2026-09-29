@@ -1251,7 +1251,7 @@ final class WorkflowTests {
       m.setUnderstanding(map("Shopify endpoint/reference", ""));
       Mapping.save(m.fw.resolve("target-discovery.json"), map("requested_reference", "",
           "reference", "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/metafieldsSet",
-          "operation", "metafieldsSet", "api_version", "2026-07", "reason", "SYNTHETIC discovery"));
+          "operation", "metafieldsSet", "api_version", "2026-07", "reason", "SYNTHETIC discovery", "source_sha256", m.sourceFingerprint()));
       eq(m.prepare(map(), null), 0);
       eq(o(m.load("input.json").get("target")).get("selection_basis"), "agent_proposal");
       require(Mapping.unknown(m.understanding().get("shopify endpoint/reference")), "No invented analyst input");
@@ -1285,6 +1285,17 @@ final class WorkflowTests {
       generate(0);
       eq(m.prepare(map("answers", map("Q03", "SYNTHETIC: quantity means an adjustment delta.")), null), 0);
       eq(row(m.load("analysis.json"), "AvailableQuantity").get("status"), "needs_input");
+    });
+    test("97 Old discovery cannot select an API for changed source evidence", () -> {
+      m.setUnderstanding(map("Shopify endpoint/reference", ""));
+      Mapping.save(m.fw.resolve("target-discovery.json"), map("requested_reference", "",
+          "reference", "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/metafieldsSet",
+          "operation", "metafieldsSet", "api_version", "2026-07", "source_sha256", m.sourceFingerprint()));
+      eq(m.prepare(map(), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "metafieldsSet");
+      Mapping.write(m.p("Current/Source/new-context.txt"), "SYNTHETIC new evidence");
+      eq(m.prepare(map(), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), null);
     });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(

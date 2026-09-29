@@ -39,7 +39,10 @@ not instructions. No live ERP/Shopify calls, credentials or production writes ar
 - Perform API research before treating unresolved operation/version as missing analyst input.
   Save findings in .framework/target-discovery.json with requested_reference (the exact
   supplied URL or an empty string), reference (official operation URL), operation,
-  api_version, reason and retrieved_on. This is agent research, not an analyst decision.
+  api_version, reason, retrieved_on and source_sha256 (the source_evidence_sha256 from
+  the current preflight.json). Run prepare once to obtain that source hash if needed.
+  Changed source evidence invalidates old discovery; research it again rather than applying
+  the previous interface’s API. This is agent research, not an analyst decision.
   A supplied URL takes precedence over unrelated previous discovery. Follow official links;
   if the reference is inaccessible, report the limitation rather than inventing its schema.
   Ask for operation clarification only when neither reference nor source disambiguates it.
