@@ -6,6 +6,12 @@ Current flow: ERP -> middleware -> Sitecore
 
 Target flow: ERP -> middleware -> Shopify
 
+Shopify endpoint/reference: https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities
+
+Shopify operation:
+
+Shopify API version:
+
 Payload origin: Unknown
 
 Reviewer:

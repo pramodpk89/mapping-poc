@@ -24,7 +24,7 @@ behavior, not Copilot reasoning, real WSDL provenance or business approval. Neve
 their answers into the real pack. Tests do not make ERP or Shopify calls.
 
 Windows-specific tests exercise the CMD launcher, missing/invalid java.home, locked-file
-recovery and a Java runtime copied to an ASCII path containing spaces. A Unicode Java-home\nconfiguration is tested for an explicit, actionable rejection. They are
+recovery and a Java runtime copied to an ASCII path containing spaces. A Unicode Java-home configuration is tested for an explicit, actionable rejection. They are
 reported as outstanding, never passing, when run on another operating system.
 
 The GitHub workflow `Java 8 Windows acceptance` runs the shipped JAR on a Windows runner
@@ -48,8 +48,7 @@ mkdir .framework\build
 Do not include the build directory in the ZIP. Re-run acceptance tests against the rebuilt
 JAR. Framework code uses Java 8 standard library APIs, safe XML without external resolution,
 explicit UTF-8/BOM-aware UTF-16 reading, strict JSON validation, atomic writes and file locks.
-The legacy Python source is archived outside the pack under work/legacy-python solely as
-migration reference. It is not used for setup, runs, tests or packaging the active framework.
+The active pack contains only the Java helper; obsolete Python helpers and old packs were removed.
 
 ## Windows path handling
 
@@ -67,20 +66,26 @@ Git attributes preserve source/documentation bytes across checkouts, because lin
 conversion must not silently change the evidence SHA-256 hashes. Pack ZIPs preserve those
 bytes too. The portable suite is also compiled and run on a real local Java 8 runtime.
 
-## Recorded results — 29 September 2026
+## Current validation
 
-- Windows: **75 passed, 0 failed**, Java 1.8.0_504 (Temurin) on Windows Server 2025.
-  [Successful CI run](https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866).
-  The shipped JAR was executed and all Java sources compiled with a Java 8 compiler.
-- macOS: **69 passed, 0 failed**, Java 1.8.0_382 (Amazon Corretto). Six Windows-only
-  checks were marked outstanding on that host and subsequently executed in Windows CI.
-- The original 43 scenarios are included in these counts, rather than additional runs.
-- Three generated HTML scenarios passed static inspection of structure, embedded data,
-  read-only controls, answer preservation and reopened status. Visual browser inspection
-  is outstanding because the browser tool rejected local-file URLs. No workaround was used.
-- ZIP contents were verified byte-for-byte. The real purpose and WSDL provenance remain
-  unconfirmed, and original evidence, documentation and real analyst files are unchanged.
+Local Java 8 execution: **83 passed, 0 failed**, six Windows-only checks outstanding on
+macOS. Windows CI for this implementation is pending; it must run before release is complete.
+The preceding release's Windows result is not evidence for this implementation.
 
-Repository reports: outputs/java8-test-results/ and outputs/windows-java8-test-results/.
-The latter contains ci-run.json linking the executed implementation commit. Later commits
-that only add validation records/documentation do not change that tested JAR.
+Cases 76-89 cover XML extraction without WSDL/research bundles, verified normalization,
+orphaned copies, namespaces and duplicate names, SOAP/WSDL metadata, endpoint-only target
+setup, operation/version clarification, target changes, official citations, saved chat input,
+internal-only target tampering and REST method/reference handling. These use synthetic fixtures;
+no selected operation, decision or research finding in a test establishes real business facts.
+
+Four generated scenarios are checked statically: basic, clarified, reopened and alternate
+target. The checks inspect HTML/embedded JSON, XML paths, saved answers and statuses. Browser
+visual inspection is **unverified**: the browser tool could not verify the admin-enforced
+policy and denied access to the local report preview. No bypass was attempted. Browser
+JavaScript, Print/PDF and an actual analyst Copilot pilot were not exercised.
+
+The real pack blocks on missing purpose and Shopify API reference. The supplied XML is usable
+through its verified closing-tag-only copy. WSDL provenance remains unconfirmed. Original
+XML/WSDL bytes and saved Shopify documentation are preserved. The JAR makes no live store calls.
+
+Repository execution records: outputs/java8-test-results/ and outputs/windows-java8-test-results/.

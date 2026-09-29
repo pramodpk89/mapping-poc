@@ -1,33 +1,23 @@
-# Integration mapping POC
+# Copilot interface mapping
 
-The active framework runs on **Java 1.8** with no external libraries. Set the approved Java
-folder in [java-home.properties](outputs/copilot-mapping-poc/java-home.properties); a JRE is
-sufficient. No Python, Node.js, PowerShell helpers, compiler or admin access is needed by
-analysts. Company application controls must permit the supplied CMD launcher and JAR.
+Use one folder: **[copilot-mapping-poc](outputs/copilot-mapping-poc)**.
+[Download the ZIP](outputs/copilot-mapping-poc.zip), extract it and open that folder in VS Code.
+It includes the `/map-interface` skill, Java 8 helper, launcher, instructions, tests and evidence.
 
-1. Download the [Copilot pack ZIP](outputs/copilot-mapping-poc.zip) and extract it.
-2. Set `java.home` and open `copilot-mapping-poc` as the folder in VS Code.
-3. Follow [START-HERE.txt](outputs/copilot-mapping-poc/START-HERE.txt), then send
-   `/map-interface` in Copilot Agent mode. Give clarifications in chat and rerun.
+1. Set the approved Java 1.8 folder in `java-home.properties`.
+2. Give Copilot the XML payload, interface purpose and intended Shopify API endpoint/reference.
+3. Run `/map-interface`. Copilot inspects the target API and proposes XML-to-Shopify mappings.
+4. Answer clarifications in chat and rerun. `Report.html` is read-only.
 
-Reports are read-only HTML. Mandatory input/evidence checks block incomplete runs. A changed
-decision reopens affected mappings and preserves unrelated answers. Last-review.html retains
-the last successful review through failed reruns. The real business purpose and the supplied
-WSDLs' role/provenance remain **unconfirmed**. All test/demo decisions are synthetic.
+No documentation curation, internal JSON editing, extra modules or administrator access is
+required from analysts. No Shopify operation is selected by default. Incomplete inputs block
+mapping analysis. Changed decisions reopen affected mappings; unrelated answers and the last
+successful review are preserved. WSDL provenance and the real interface purpose remain unconfirmed.
 
-- [Workflow](outputs/copilot-mapping-poc/RUN.md) and [testing/build guide](outputs/copilot-mapping-poc/TESTING.md).
-- [Windows Java 8 test results](outputs/windows-java8-test-results/Test-results.html): 75 passed;
-  [successful Windows CI](https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866).
-- [Java 8 local test results](outputs/java8-test-results/Test-results.html), 69 passed on macOS, with generated review scenarios.
-- [Shopify reference](outputs/copilot-mapping-poc/Shopify/README.md): eight saved official pages.
-- [Updated session handoff](outputs/SESSION-HANDOFF.md).
+[Start here](outputs/copilot-mapping-poc/START-HERE.txt) ·
+[Testing](outputs/copilot-mapping-poc/TESTING.md) ·
+[Session handoff](outputs/SESSION-HANDOFF.md)
 
-Open downloaded HTML in a browser; GitHub's file view displays source. Earlier
-`availability-poc`, `cowork-mapping-poc` and `mapping-test-results` are historical prototypes
-and evidence. Legacy Python helpers are archived in `work/legacy-python`, outside the active
-pack. The Java migration supersedes the earlier PowerShell plan at the user's request.
-
-The Java installation path must use ASCII characters; spaces are supported. Unicode pack,
-evidence and answer paths passed Windows tests. A real analyst Copilot pilot, visual browser
-review and live Shopify validation remain outstanding. No ERP or
-Shopify writes are performed by this framework.
+Maintainer validation records are outside the working folder. Old packs have been removed.
+Tests use synthetic decisions, never business confirmations. This workflow makes no ERP or
+Shopify writes. Visual browser review and an actual analyst Copilot pilot remain unverified.

@@ -23,6 +23,9 @@ public final class Mapping {
     "What this interface does",
     "Current flow",
     "Target flow",
+    "Shopify endpoint/reference",
+    "Shopify operation",
+    "Shopify API version",
     "Payload origin",
     "Reviewer",
     "Additional context"
@@ -487,8 +490,8 @@ public final class Mapping {
     for (String k :
         Arrays.asList(
             "require_description",
-            "require_parseable_source_contract_or_payload",
-            "require_official_shopify_reference"))
+            "require_xml_business_payload",
+            "require_shopify_endpoint_reference"))
       if (!(cfg.get(k) instanceof Boolean))
         throw new IllegalArgumentException("Framework configuration needs a boolean for " + k);
     List<Path> files = files(p("Current"));
@@ -511,64 +514,19 @@ public final class Mapping {
               + " interface does:.");
     if (unknown(u.get("interface name")))
       missing.add("Understanding.txt: provide the interface name.");
-    for (Path file : files) {
-      String relative = root.relativize(file).toString().replace('\\', '/'),
-          name = file.getFileName().toString();
-      if (!relative.startsWith("Current/Source/") || name.equals("availability-normalized.xml"))
-        continue;
-      try {
-        if (name.toLowerCase(Locale.ROOT).matches(".*\\.(xml|wsdl|xsd)")) {
-          Document d = xml(file);
-          Element e = d.getDocumentElement();
-          if (e.getLocalName().equals("definitions")
-              && d.getElementsByTagNameNS("http://www.w3.org/2001/XMLSchema", "element").getLength()
-                  == 0) {
-            warnings.add(name + ": imports external schemas; not used as sole parseable contract.");
-            continue;
-          }
-          if (!e.hasChildNodes() && e.getTextContent().trim().isEmpty()) {
-            warnings.add(name + ": empty document is not source evidence.");
-            continue;
-          }
-          usable.add(relative);
-        } else if (name.toLowerCase(Locale.ROOT).endsWith(".json")) {
-          Object v = json(file);
-          if (v instanceof Map && !obj(v).isEmpty() || v instanceof List && !arr(v).isEmpty())
-            usable.add(relative);
-        }
-      } catch (Exception e) {
-        warnings.add(
-            name
-                + ": incomplete, invalid or DTD-bearing structured file; kept as supplementary"
-                + " evidence.");
-      }
-    }
-    if (Boolean.TRUE.equals(cfg.get("require_parseable_source_contract_or_payload"))
-        && usable.isEmpty())
-      missing.add(
-          "Current/Source: add a readable WSDL with embedded schemas, XSD, complete XML payload or"
-              + " nonempty JSON payload. Notes or the repaired sample alone do not satisfy this"
-              + " check.");
-    boolean good = false;
     try {
-      Map<String, Object> t = obj(json(p("Shopify/Target-reference.json")));
-      boolean official = false;
-      for (Object v : arr(t.get("evidence"))) {
-        URI uri = new URI(str(obj(v).get("url")));
-        if ("https".equals(uri.getScheme()) && "shopify.dev".equals(uri.getHost())) official = true;
-      }
-      good =
-          "Shopify".equals(t.get("platform"))
-              && !unknown(t.get("api_version"))
-              && !arr(t.get("candidates")).isEmpty()
-              && official;
+      List<Object> fields = payloadFields(obj(load("input.json").get("source")), warnings);
+      for (Object field : fields)
+        for (Object file : arr(obj(field).get("evidence_files")))
+          if (!usable.contains(file)) usable.add(file);
     } catch (Exception e) {
-      good = false;
+      missing.add(e.getMessage());
     }
-    if (Boolean.TRUE.equals(cfg.get("require_official_shopify_reference")) && !good)
-      missing.add(
-          "Shopify/Target-reference.json: obtain official Shopify target documentation with an API"
-              + " version and candidate operations before analysis.");
+    try {
+      targetInput(u);
+    } catch (Exception e) {
+      missing.add(e.getMessage());
+    }
     try {
       warnings.addAll(arr(confirmed(decisions()).get("warnings")));
       questions();
@@ -625,52 +583,138 @@ public final class Mapping {
     data.put("answers", answers);
     data.put("known_rules", confirmed(decisions()).get("rules"));
     data.put("human_inputs_sha256", checked.get("human_inputs_sha256"));
-    List<Object> matching = list();
-    for (Path file : files(p("Current/Source"))) {
-      if (!file.toString().toLowerCase(Locale.ROOT).endsWith(".wsdl")) continue;
-      Document d;
-      try {
-        d = xml(file);
-      } catch (Exception e) {
-        continue;
-      }
-      NodeList types = d.getElementsByTagNameNS("http://www.w3.org/2001/XMLSchema", "complexType");
-      for (int n = 0; n < types.getLength(); n++) {
-        Element t = (Element) types.item(n);
-        if (!"WebAvailabilityItem".equals(t.getAttribute("name"))) continue;
-        List<Object> fields = list();
-        NodeList seqs = t.getElementsByTagNameNS("http://www.w3.org/2001/XMLSchema", "sequence");
-        for (int s = 0; s < seqs.getLength(); s++) {
-          NodeList nodes = seqs.item(s).getChildNodes();
-          for (int k = 0; k < nodes.getLength(); k++) {
-            Node node = nodes.item(k);
-            if (!(node instanceof Element) || !"element".equals(node.getLocalName())) continue;
-            Element e = (Element) node;
-            fields.add(
-                map(
-                    "name",
-                    e.getAttribute("name"),
-                    "type",
-                    e.getAttribute("type"),
-                    "optional",
-                    "0".equals(e.getAttribute("minOccurs")),
-                    "nullable",
-                    "true".equals(e.getAttribute("nillable"))));
-          }
-        }
-        if (!fields.isEmpty()) matching.add(fields);
+    obj(data.get("source")).put("fields", payloadFields(obj(data.get("source")), list()));
+    data.put("target", targetInput(u));
+    return data;
+  }
+
+  static final String XML_TYPE = "XML text (sample; contract type unconfirmed)";
+
+  static String xmlName(Node node) {
+    String ns = node.getNamespaceURI();
+    return (ns == null || ns.isEmpty() ? "" : "{" + ns + "}") + node.getLocalName();
+  }
+
+  static boolean metadataNamespace(String ns) {
+    return ns != null && (ns.equals("http://www.w3.org/2001/XMLSchema")
+        || ns.startsWith("http://schemas.xmlsoap.org/wsdl")
+        || ns.equals("http://www.w3.org/ns/wsdl"));
+  }
+
+  void collectPayload(Element e, String parent, String file, Map<String, Object> fields) {
+    String ns = e.getNamespaceURI(), name = e.getLocalName();
+    if (metadataNamespace(ns)) return;
+    boolean soap = "http://schemas.xmlsoap.org/soap/envelope/".equals(ns)
+        || "http://www.w3.org/2003/05/soap-envelope".equals(ns);
+    if (soap && !"Envelope".equals(name) && !"Body".equals(name)) return;
+    String path = parent + "/" + xmlName(e);
+    boolean children = false;
+    NodeList nodes = e.getChildNodes();
+    for (int n = 0; n < nodes.getLength(); n++) {
+      if (nodes.item(n) instanceof Element) {
+        children = true;
+        collectPayload((Element) nodes.item(n), path, file, fields);
       }
     }
-    if (matching.isEmpty())
-      throw new IllegalArgumentException(
-          "No embedded WebAvailabilityItem field inventory is available. This POC needs a reviewed"
-              + " contract adapter for other schemas; old fields cannot be reused.");
-    for (Object fields : matching)
-      if (!fields.equals(matching.get(0)))
-        throw new IllegalArgumentException(
-            "Source contracts disagree about WebAvailabilityItem. Clarify which contract applies.");
-    obj(data.get("source")).put("fields", matching.get(0));
-    return data;
+    if (soap) return;
+    NamedNodeMap attrs = e.getAttributes();
+    for (int n = 0; n < attrs.getLength(); n++) {
+      Node attr = attrs.item(n);
+      String ans = attr.getNamespaceURI();
+      if (ans != null && (ans.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)
+          || ans.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)
+          || ans.equals(XMLConstants.XML_NS_URI) || metadataNamespace(ans))) continue;
+      payloadField(fields, path + "/@" + xmlName(attr), "@" + attr.getLocalName(), file);
+    }
+    // A lone empty root is not meaningful input; empty leaf elements inside a payload are fields.
+    if (!children && (!parent.isEmpty() || !e.getTextContent().trim().isEmpty()))
+      payloadField(fields, path, name, file);
+  }
+
+  void payloadField(Map<String, Object> fields, String path, String name, String file) {
+    Map<String, Object> field = fields.containsKey(path) ? obj(fields.get(path))
+        : map("name", name, "path", path, "type", XML_TYPE, "optional", null,
+            "nullable", null, "evidence_files", list());
+    if (!arr(field.get("evidence_files")).contains(file)) arr(field.get("evidence_files")).add(file);
+    fields.put(path, field);
+  }
+
+  List<Object> payloadFields(Map<String, Object> source, List<Object> warnings) throws Exception {
+    Map<String, Object> fields = map();
+    String sample = str(source.get("sample")), normalized = str(source.get("normalized_sample"));
+    for (Path file : files(p("Current/Source"))) {
+      String relative = root.relativize(file).toString().replace('\\', '/');
+      if (!relative.toLowerCase(Locale.ROOT).endsWith(".xml") || relative.equals(normalized)) continue;
+      Document doc;
+      try {
+        doc = xml(file);
+      } catch (Exception error) {
+        if (relative.equals(sample) && !normalized.isEmpty() && Files.isRegularFile(p(normalized))) {
+          local(p(normalized));
+          if (!normalized.startsWith("Current/Source/") || normalized.equals(sample))
+            throw new IllegalArgumentException("Normalized payload must be a separate local source file.");
+          String original = read(file).trim(), repaired = read(p(normalized)).trim();
+          if (!repaired.startsWith(original)
+              || !repaired.substring(original.length()).matches("(?:\\s*</[A-Za-z_][A-Za-z0-9_.:-]*>)+"))
+            throw new IllegalArgumentException("Normalized XML differs beyond appended closing tags; review the original payload.");
+          doc = xml(p(normalized));
+          warnings.add(relative + ": incomplete excerpt; extracted via " + normalized
+              + " after verifying only closing tags were appended. Values and business rules remain unconfirmed.");
+        } else {
+          throw new IllegalArgumentException(relative + ": unreadable/incomplete XML or DTD; supply a complete business payload.");
+        }
+      }
+      Element rootElement = doc.getDocumentElement();
+      if (metadataNamespace(rootElement.getNamespaceURI())
+          || Arrays.asList("definitions", "description", "schema").contains(rootElement.getLocalName())) {
+        warnings.add(relative + ": service/schema metadata retained as reference, not mapped.");
+        continue;
+      }
+      collectPayload(rootElement, "", relative, fields);
+    }
+    if (fields.isEmpty()) throw new IllegalArgumentException(
+        "Current/Source: supply an XML business payload. WSDL/XSD metadata, notes, JSON or a normalized copy without its original cannot supply mapping fields.");
+    Map<String, Integer> counts = new HashMap<>();
+    for (Object value : fields.values()) {
+      String name = str(obj(value).get("name"));
+      counts.put(name, counts.containsKey(name) ? counts.get(name) + 1 : 1);
+    }
+    for (Object value : fields.values()) {
+      Map<String, Object> field = obj(value);
+      if (counts.get(str(field.get("name"))) > 1) field.put("name", field.get("path"));
+    }
+    return new ArrayList<>(fields.values());
+  }
+
+  Map<String, Object> targetInput(Map<String, Object> u) throws Exception {
+    String reference = str(u.get("shopify endpoint/reference")).trim();
+    URI uri;
+    try { uri = new URI(reference); }
+    catch (Exception e) { throw new IllegalArgumentException("Share the Shopify API endpoint/reference in Copilot chat."); }
+    if (!"https".equals(uri.getScheme()) || uri.getHost() == null || uri.getUserInfo() != null
+        || uri.getQuery() != null || uri.getFragment() != null || unknown(uri.getPath()))
+      throw new IllegalArgumentException("Share the Shopify API endpoint/reference in Copilot chat (HTTPS URL without credentials or query parameters).");
+    String operation = str(u.get("shopify operation")).trim();
+    Matcher op = Pattern.compile("/(?:mutations|queries)/([^/]+)/*$").matcher(uri.getPath());
+    if (op.find()) {
+      if (!unknown(operation) && !operation.equals(op.group(1)))
+        throw new IllegalArgumentException("Shopify operation conflicts with the supplied reference; clarify the intended operation.");
+      operation = op.group(1);
+    }
+    String version = str(u.get("shopify api version")).trim();
+    Matcher ver = Pattern.compile("/(20[0-9]{2}-(?:01|04|07|10))(?:/|$)").matcher(uri.getPath());
+    if (ver.find()) {
+      if (!unknown(version) && !version.equals(ver.group(1)))
+        throw new IllegalArgumentException("Shopify API version conflicts with the supplied endpoint/reference.");
+      version = ver.group(1);
+    }
+    // REST resource URLs identify an operation only with an HTTP method supplied in chat.
+    if (unknown(operation)) throw new IllegalArgumentException(
+        "Shopify endpoint/reference is saved. Which operation should it target? A generic GraphQL URL alone does not identify one.");
+    if (!version.matches("20[0-9]{2}-(?:01|04|07|10)")) throw new IllegalArgumentException(
+        "Shopify endpoint/reference is saved. Confirm the API version, or let Copilot resolve the version of the official reference.");
+    return map("platform", "Shopify", "endpoint_reference", reference, "api_version", version,
+        "research_method", "agent_inspects_analyst_reference", "selected_operation", operation);
   }
 
   static void schema(Object value, Map<String, Object> s, String at) {
@@ -745,6 +789,28 @@ public final class Mapping {
     schema(a, obj(json(fw.resolve("schemas/analysis.schema.json"))), "analysis");
     if (!obj(in.get("interface")).get("id").equals(a.get("interface_id")))
       throw new IllegalArgumentException("Input and analysis refer to different interfaces");
+    Map<String, Object> target = obj(in.get("target"));
+    String operation = str(target.get("selected_operation")), version = str(target.get("api_version"));
+    Map<String, Object> selected = find(arr(a.get("target_candidates")), "operation", operation);
+    if (selected == null || !"selected".equals(selected.get("state")))
+      throw new IllegalArgumentException("Analysis must inspect the supplied Shopify operation and mark it selected.");
+    boolean official = false;
+    for (Object id : arr(selected.get("evidence_ids"))) {
+      Map<String, Object> evidence = find(arr(a.get("evidence")), "id", id);
+      if (evidence == null) continue;
+      URI uri = new URI(str(evidence.get("url")));
+      if ("https".equals(uri.getScheme()) && "shopify.dev".equals(uri.getHost())
+          && version.equals(evidence.get("api_version")) && !unknown(evidence.get("retrieved_on"))
+          && !unknown(evidence.get("note")) && uri.getPath().contains("/" + version + "/")
+          && uri.getPath().startsWith("/docs/api/")
+          && (uri.getPath().endsWith("/" + operation)
+              || operation.matches("(?:GET|POST|PUT|PATCH|DELETE) /[^\\s]+")
+                  && operation.equals(evidence.get("operation"))
+                  && uri.getPath().contains("/admin-rest/"))) official = true;
+
+    }
+    if (!official) throw new IllegalArgumentException(
+        "Copilot must inspect and cite versioned official Shopify documentation for the selected operation before generation.");
     List<Object> fields = arr(obj(in.get("source")).get("fields"));
     Set<String> names = ids(fields, "name", "source field");
     if (names.isEmpty()) throw new IllegalArgumentException("No source fields were identified");
@@ -778,7 +844,7 @@ public final class Mapping {
       Map<String, Object> row = obj(v);
       String f = str(row.get("source_field"));
       if (!Objects.equals(row.get("source_type"), find(fields, "name", f).get("type")))
-        throw new IllegalArgumentException(f + ": source type does not match the contract");
+        throw new IllegalArgumentException(f + ": source type does not match the XML payload inventory");
       if (Arrays.asList("ready", "excluded").contains(row.get("status"))) {
         if (!"confirmed".equals(row.get("decision_basis")) || unknown(row.get("confirmed_by")))
           throw new IllegalArgumentException(
@@ -930,7 +996,8 @@ public final class Mapping {
         Set<String> known = ids(arr(a.get("questions")), "id", "question ID");
         for (String key : edits.keySet())
           if (!Arrays.asList(
-                  "purpose", "source_origin", "reviewer", "context", "answers", "decisions")
+                  "purpose", "source_origin", "reviewer", "context", "answers", "decisions",
+                  "shopify_reference", "shopify_operation", "shopify_version")
               .contains(key))
             throw new IllegalArgumentException("Unknown clarification property " + key);
         if (imported != null) {
@@ -970,10 +1037,21 @@ public final class Mapping {
           "source_origin",
           "Payload origin",
           "reviewer",
-          "Reviewer"
+          "Reviewer",
+          "shopify_reference",
+          "Shopify endpoint/reference",
+          "shopify_operation",
+          "Shopify operation",
+          "shopify_version",
+          "Shopify API version"
         };
         for (int n = 0; n < labels.length; n += 2)
           if (edits.containsKey(labels[n])) updates.put(labels[n + 1], edits.get(labels[n]));
+        if (edits.containsKey("shopify_reference") && !Objects.equals(
+            str(understanding().get("shopify endpoint/reference")), edits.get("shopify_reference"))) {
+          if (!edits.containsKey("shopify_operation")) updates.put("Shopify operation", "");
+          if (!edits.containsKey("shopify_version")) updates.put("Shopify API version", "");
+        }
         if (edits.containsKey("context")) {
           if (!(edits.get("context") instanceof String))
             throw new IllegalArgumentException("Context must be text");
@@ -1089,8 +1167,10 @@ public final class Mapping {
           throw new IllegalArgumentException("Source evidence changed. Copilot must review it.");
       }
     }
+    Map<String, Object> reportInput = obj(copy(in));
+    reportInput.remove("answers");
     String payload =
-        Json.stringify(map("input", in, "analysis", a, "stale", false, "input_warnings", warnings))
+        Json.stringify(map("input", reportInput, "analysis", a, "stale", false, "input_warnings", warnings))
             .replace("<", "\\u003c")
             .replace(">", "\\u003e")
             .replace("&", "\\u0026");
@@ -1133,7 +1213,7 @@ public final class Mapping {
         }
         Map<String, Object> assembled = assemble(in, a, checked);
         for (String key :
-            Arrays.asList("interface", "answers", "known_rules", "additional_context"))
+            Arrays.asList("interface", "answers", "known_rules", "additional_context", "target"))
           if (!Objects.equals(in.get(key), assembled.get(key)))
             throw new IllegalArgumentException(
                 "Analyst "
@@ -1142,7 +1222,7 @@ public final class Mapping {
         if (!Objects.equals(
             obj(in.get("source")).get("fields"), obj(assembled.get("source")).get("fields")))
           throw new IllegalArgumentException(
-              "Source fields changed; prepare and analyse the current contract.");
+              "Source fields changed; prepare and analyse the current XML payload.");
         validate(in, a);
         List<Path> history = completedHistory();
         if (!history.isEmpty()) {

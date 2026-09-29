@@ -1,53 +1,22 @@
-RUN THIS INTERFACE WITH GITHUB COPILOT + JAVA 1.8
+INTERFACE MAPPING — START HERE
 
-One-time setup
-1. Use your support team's approved VS Code, GitHub Copilot Agent access and Java 1.8.
-   An existing Java 8 JRE or JDK folder is sufficient. No compiler, Python, Node.js,
-   PowerShell scripts, extra modules or administrator access are required by this pack.
-2. Extract the ZIP to a local writable folder. Open java-home.properties in a text editor.
-   Set java.home to the Java 1.8 folder containing bin\java.exe, for example:
-   java.home=C:\Program Files\Java\jre1.8.0_XXX
-   Use your real folder. No surrounding quotes or doubled backslashes. Save as UTF-8.
-   This setting applies only to this pack; it does not change your machine's Java setup.
-3. Open the whole extracted copilot-mapping-poc folder in VS Code and sign in to Copilot.
-   No separate AI API key is needed. Company policies still apply. If execution is blocked,
-   ask support for an approved deployment; do not bypass execution or application policies.
+1. Extract the full ZIP and open this entire folder in VS Code with Copilot Agent mode.
+2. Have your team set java.home in java-home.properties to an approved Java 1.8 folder.
+   No installation, extra modules, administrator access or policy bypass is part of this pack.
+3. Put the business XML payload in Current/Source. Keep original evidence unchanged.
+4. In Copilot chat, describe the interface purpose and supply the Shopify API endpoint/reference
+   you want to target. Copilot inspects its fields and requirements and proposes XML-to-Shopify
+   mappings. It asks only for essential missing operation/version context. You do not need
+   to prepare documentation or internal JSON. No Shopify operation is selected by default.
+5. Run /map-interface. Answer follow-up questions in chat; Copilot saves and applies them.
+6. Open Report.html. It is read-only and contains mappings, evidence and unresolved questions.
+   There is no answer-entry section. Give changes in chat and rerun /map-interface.
 
-Each run
-1. Have one sentence describing the interface's business purpose ready.
-2. In Copilot Chat, select Agent mode and send /map-interface.
-3. Give Copilot the purpose and clarifications in chat. It saves them, checks the inputs,
-   analyses the mapping and generates Report.html. Missing inputs block the run.
-4. Open Report.html in your browser. Give corrections in chat and run /map-interface again.
+Missing required inputs stop the run. Last-review.html preserves the last completed review
+through failures and is clearly marked historical. Keep earlier evidence and saved docs.
+WSDL provenance and the real interface purpose are still unconfirmed in the supplied example.
+The incomplete original XML has a separately labelled closing-tag-only normalized copy.
 
-The report is read-only. Unrelated answers are preserved when a decision changes.
-Last-review.html retains the last completed review if a later run fails; it may be outdated.
-You do not need to edit JSON or type commands. Understanding.txt, Questions.txt and
-Decisions.csv remain available if you prefer editing the human-readable files directly.
-
-If /map-interface is not listed, ensure the folder containing .github is open and your
-VS Code/Copilot setup supports skills. Fallback in Agent mode:
-"Read RUN.md and generate Report.html for this interface."
-
-Folders
-Current/Source: supplied evidence. The WSDLs' role and origin are NOT confirmed.
-Current/Target: existing Sitecore details and mappings, if available.
-Shopify: saved target requirements and official API documentation.
-.github and .framework: maintained by the framework owner.
-
-The real business purpose is still a placeholder. All demo/test answers are synthetic.
-No test decision is a real business confirmation. Live Shopify validation and an actual
-analyst Copilot pilot remain outstanding.
-
-Support validation
-Run Test-Windows.cmd from Command Prompt after setting java.home.
-Results are saved under Test-results/Test-results.html, with synthetic example reports.
-It uses temporary copies and does not replace the real analyst's inputs or report.
-The framework's TESTING.md explains the recorded local and Windows test evidence.
-
-The Java installation folder must use ASCII characters; spaces are supported. The
-mapping folder, evidence and answers may contain Unicode. See TESTING.md for details.
-
-Verified: 75 automated checks passed on Windows with Java 1.8, and 69 portable checks
-passed on macOS with Java 1.8. HTML static checks passed; visual browser review and
-the real analyst Copilot pilot remain outstanding. All test decisions are synthetic.
+The Java installation path must use ASCII characters; spaces are supported. Pack/evidence
+paths and chat answers may contain Unicode. See TESTING.md for actual execution evidence,
+Windows checks and analyst-pilot limitations. All test decisions are synthetic.

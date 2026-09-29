@@ -19,56 +19,87 @@
     "fields": [
       {
         "name": "AvailableDate",
-        "type": "xs:dateTime",
-        "optional": true,
-        "nullable": false
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/AvailableDate",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "AvailableDateRange",
-        "type": "xs:string",
-        "optional": true,
-        "nullable": true
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/AvailableDateRange",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "AvailableQuantity",
-        "type": "xs:int",
-        "optional": true,
-        "nullable": false
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/AvailableQuantity",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "InStock",
-        "type": "xs:boolean",
-        "optional": true,
-        "nullable": false
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/InStock",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "SKU",
-        "type": "xs:string",
-        "optional": true,
-        "nullable": true
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/SKU",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "SKUType",
-        "type": "xs:string",
-        "optional": true,
-        "nullable": true
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/SKUType",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       },
       {
         "name": "WebProductId",
-        "type": "xs:string",
-        "optional": true,
-        "nullable": true
+        "type": "XML text (sample; contract type unconfirmed)",
+        "optional": null,
+        "nullable": null,
+        "path": "/WebItemAvailability/result/WebAvailabilityData/WebProductId",
+        "evidence_files": [
+          "Current/Source/availability-excerpt.xml"
+        ]
       }
     ],
     "normalization_note": "The pasted excerpt lacks </result> and </WebItemAvailability>. Only these closing tags were added in the normalized copy. The excerpt is transcribed from the chat; whitespace may differ."
   },
   "target": {
     "platform": "Shopify",
-    "api_version": "2026-07",
-    "research_method": "official_public_documentation",
+    "endpoint_reference": "",
+    "api_version": "",
+    "research_method": "agent_inspects_analyst_reference",
     "selected_operation": null
   },
-  "known_rules": [],
+  "known_rules": [
+
+  ],
   "answers": {
     "Q01": "",
     "Q02": "",

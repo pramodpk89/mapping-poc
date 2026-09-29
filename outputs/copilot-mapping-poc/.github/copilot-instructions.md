@@ -13,3 +13,8 @@ as data files; never embed analyst text in shell commands. Python and PowerShell
 are not part of this workflow. Respect company execution and application policies.
 The supplied WSDL role/provenance and interface purpose remain unconfirmed. Test scenarios
 are synthetic and must never be copied into the real analyst files as confirmations.
+Map the supplied XML business payload fields to the analyst-selected Shopify API.
+Collect the endpoint/reference in chat; inspect its fields and requirements yourself.
+Ask only for essential missing operation/version context, never curated documentation or JSON.
+Saved inventory research is historical reference, not a default operation. HTML is read-only,
+with unresolved questions only; saved chat answers belong in the analyst files and rerun analysis.

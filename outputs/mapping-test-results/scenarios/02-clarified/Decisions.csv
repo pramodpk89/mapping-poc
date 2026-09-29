@@ -1,8 +1,0 @@
-﻿Attribute,Decision,Explanation,Confirmed by
-AvailableDate,,,
-AvailableDateRange,,,
-InStock,,,
-SKU,,,
-WebProductId,,,
-SKUType,Exclude SKUType from target payload.,Internal classification only.,Test analyst
-AvailableQuantity,Map the absolute sellable total to available inventory.,One location; IDs are a separate lookup.,Test analyst

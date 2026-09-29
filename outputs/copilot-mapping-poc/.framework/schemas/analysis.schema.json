@@ -318,6 +318,9 @@
           },
           "acquisition": {
             "type": "string"
+          },
+          "operation": {
+            "type": "string"
           }
         },
         "required": [

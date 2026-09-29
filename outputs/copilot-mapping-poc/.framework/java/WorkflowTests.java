@@ -94,7 +94,11 @@ final class WorkflowTests {
     copyTree(template, root);
     m = new Mapping(root);
     try {
+      // Fixture target only: never copied into the real analyst pack.
+      m.setUnderstanding(map("Shopify endpoint/reference",
+          "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities"));
       check.run();
+
       passed++;
       results.add(map("name", name, "status", "passed"));
       System.out.println("PASS " + name);
@@ -146,7 +150,17 @@ final class WorkflowTests {
                   "note",
                   rule.get("statement")));
     }
+    Map<String, Object> target = o(in.get("target"));
+    String operation = Mapping.str(target.get("selected_operation"));
+    an.put("target_candidates", list(map("name", "SYNTHETIC target fixture", "operation", operation,
+        "state", "selected", "when", "Synthetic workflow verification only", "evidence_ids", list("synthetic-target"))));
+    a(an.get("evidence")).removeIf(e -> "synthetic-target".equals(o(e).get("id")));
+    a(an.get("evidence")).add(map("id", "synthetic-target", "title", "Synthetic citation fixture",
+        "url", "https://shopify.dev/docs/api/admin-graphql/" + target.get("api_version") + "/mutations/" + operation,
+        "api_version", target.get("api_version"), "retrieved_on", "2026-09-29",
+        "note", "SYNTHETIC citation fixture for validation only; no live research executed by this test."));
     if (change != null) change.accept(in, an);
+
     an.put("input_sha256", Mapping.fingerprint(in));
     Mapping.save(m.fw.resolve("input.json"), in);
     Mapping.save(m.fw.resolve("analysis.json"), an);
@@ -363,7 +377,7 @@ final class WorkflowTests {
           eq(m.prepare(map(), null), 2);
         });
     test(
-        "08 Malformed sample with good contract",
+        "08 Incomplete original with verified closing-tag copy",
         () -> {
           prepare();
           require(
@@ -375,18 +389,14 @@ final class WorkflowTests {
         "09 Missing target blocks",
         () -> {
           prepare();
-          Files.delete(m.p("Shopify/Target-reference.json"));
+          m.setUnderstanding(map("Shopify endpoint/reference", ""));
           eq(m.prepare(map(), null), 2);
         });
     test(
-        "10 Unofficial target blocks",
+        "10 Unsafe endpoint reference blocks",
         () -> {
           prepare();
-          Map<String, Object> t = o(Mapping.json(m.p("Shopify/Target-reference.json")));
-          for (Object v : a(t.get("evidence")))
-            o(v).put("url", "https://shopify.dev.example.com/fake");
-          Mapping.save(m.p("Shopify/Target-reference.json"), t);
-          eq(m.prepare(map(), null), 2);
+          eq(m.prepare(map("shopify_reference", "https://secret@shopify.dev/docs/api"), null), 2);
         });
     test(
         "11 Clarification preserves other answers and invalidates analysis",
@@ -697,18 +707,14 @@ final class WorkflowTests {
           generate(2);
         });
     test(
-        "39 New contract field requires new mapping",
+        "39 New XML field requires new mapping",
         () -> {
           prepare();
-          Path f = m.p("Current/Source/checkout-1.wsdl");
-          String text = Mapping.read(f);
-          int start = text.indexOf("complexType name=\"WebAvailabilityItem\""),
-              pos = text.indexOf("</xs:sequence>", start);
-          Mapping.write(
-              f,
-              text.substring(0, pos)
-                  + "<xs:element minOccurs=\"0\" name=\"NewField\" type=\"xs:string\"/>"
-                  + text.substring(pos));
+          for (String name : Arrays.asList("availability-excerpt.xml", "availability-normalized.xml")) {
+            Path f = m.p("Current/Source/" + name);
+            Mapping.write(f, Mapping.read(f).replace("</WebAvailabilityData>",
+                "<NewField>new</NewField></WebAvailabilityData>"));
+          }
           eq(m.prepare(map(), null), 0);
           synthetic();
           generate(2);
@@ -844,18 +850,18 @@ final class WorkflowTests {
           eq(m.prepare(map(), null), 2);
         });
     test(
-        "51 Missing embedded inventory cannot reuse stale fields",
+        "51 Unsupported payload cannot reuse stale fields",
         () -> {
           prepare();
           sourceMissing();
           Mapping.write(m.p("Current/Source/payload.json"), "{\"SKU\":\"a\"}");
           eq(m.prepare(map(), null), 2);
           require(
-              Mapping.read(m.p("Report.html")).contains("contract adapter"),
+              Mapping.read(m.p("Report.html")).contains("XML business payload"),
               "Explicit scope limitation");
         });
     test(
-        "52 Conflicting contract inventories block",
+        "52 Conflicting WSDL schemas do not determine payload fields",
         () -> {
           prepare();
           String text = Mapping.read(m.p("Current/Source/checkout-1.wsdl"));
@@ -864,7 +870,8 @@ final class WorkflowTests {
               text.replace(
                   "name=\"AvailableQuantity\" type=\"xs:int\"",
                   "name=\"AvailableQuantity\" type=\"xs:string\""));
-          eq(m.prepare(map(), null), 2);
+          eq(m.prepare(map(), null), 0);
+          eq(a(o(m.load("input.json").get("source")).get("fields")).size(), 7);
         });
     test(
         "53 Same-reviewer revised decision cannot retain old confirmation",
@@ -942,6 +949,10 @@ final class WorkflowTests {
           synthetic();
           String html = generate(0);
           require(!PatternHolder.EDIT.matcher(html).find(), "No answer inputs or contenteditable");
+          for (String token : Arrays.asList("answer-count", "updateAnswers", "input.answers", "recorded answers", "your answers", "save-answers", "id='answer-"))
+            require(!html.contains(token), "Removed answer feature: " + token);
+          require(html.contains("field.path") && html.contains("XML payload evidence"), "Payload trace rendered");
+
           require(
               html.contains("Read-only report")
                   && html.contains("id=\"print\"")
@@ -1102,6 +1113,115 @@ final class WorkflowTests {
               Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))),
               "Preserved historical review");
         });
+    test("76 XML fields survive removal of all WSDL and saved research", () -> {
+      Files.delete(m.p("Current/Source/checkout-1.wsdl"));
+      Files.delete(m.p("Current/Source/checkout-2.wsdl"));
+      Files.delete(m.p("Shopify/Target-reference.json"));
+      deleteTree(m.p("Shopify/Docs"));
+      prepare();
+      List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
+      eq(fields.size(), 7);
+      eq(o(fields.get(0)).get("path"), "/WebItemAvailability/result/WebAvailabilityData/AvailableDate");
+      eq(o(fields.get(0)).get("optional"), null);
+    });
+    test("77 Modified normalization cannot invent source values", () -> {
+      prepare();
+      Path f = m.p("Current/Source/availability-normalized.xml");
+      Mapping.write(f, Mapping.read(f).replace("LV4000000", "INVENTED"));
+      eq(m.prepare(map(), null), 2);
+    });
+    test("78 Normalized copy alone cannot substitute for original", () -> {
+      prepare();
+      Files.delete(m.p("Current/Source/availability-excerpt.xml"));
+      eq(m.prepare(map(), null), 2);
+    });
+    test("79 Arbitrary XML names, namespaces, attributes and duplicate leaves", () -> {
+      sourceMissing();
+      Mapping.write(m.p("Current/Source/order.xml"),
+          "<o:Order xmlns:o='urn:orders' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='a'>"
+          + "<o:Billing><o:Code>A</o:Code></o:Billing><o:Shipping><o:Code xsi:nil='true'/></o:Shipping></o:Order>");
+      prepare();
+      List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
+      eq(fields.size(), 3);
+      Set<String> names = Mapping.ids(fields, "name", "field");
+      require(names.contains("@id") && names.contains("/{urn:orders}Order/{urn:orders}Billing/{urn:orders}Code"), "Distinct payload paths");
+      require(!names.contains("@nil") && !names.contains("@o"), "No XML metadata attributes");
+    });
+    test("80 SOAP headers and WSDL disguised as XML are not mapped", () -> {
+      sourceMissing();
+      Mapping.write(m.p("Current/Source/service.xml"),
+          "<definitions xmlns='http://schemas.xmlsoap.org/wsdl/' name='Service'><service name='Metadata'/></definitions>");
+      Mapping.write(m.p("Current/Source/message.xml"),
+          "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'><s:Header><Token>secret</Token></s:Header>"
+          + "<s:Body><Order><Sku>a</Sku></Order></s:Body></s:Envelope>");
+      prepare();
+      List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
+      eq(fields.size(), 1); eq(o(fields.get(0)).get("name"), "Sku");
+    });
+    test("81 Generic GraphQL endpoint asks only for missing operation", () -> {
+      eq(m.prepare(map("purpose", "SYNTHETIC test", "shopify_reference",
+          "https://example.myshopify.com/admin/api/2026-07/graphql.json"), null), 2);
+      require(Mapping.read(m.p("Report.html")).contains("Which operation"), "Essential clarification");
+      eq(m.prepare(map("shopify_operation", "productUpdate"), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
+      synthetic(); generate(0);
+      exportScenario("alternate-target");
+    });
+    test("82 Versionless API reference persists pending essential clarification", () -> {
+      eq(m.prepare(map("purpose", "SYNTHETIC test", "shopify_reference",
+          "https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate"), null), 2);
+      require(Mapping.read(m.p("Understanding.txt")).contains("productUpdate"), "Saved reference");
+      eq(m.prepare(map("shopify_version", "2026-07"), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
+    });
+    test("83 Target reference changes reopen confirmation but preserve answers", () -> {
+      excluded();
+      eq(m.prepare(map("shopify_reference", "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/productUpdate"), null), 0);
+      eq(row(m.load("analysis.json"), "SKUType").get("status"), "needs_input");
+      require(!Mapping.unknown(o(m.load("input.json").get("answers")).get("Q08")), "Saved clarification retained");
+      generate(3);
+    });
+    test("84 Agent must cite selected operation and version before generating", () -> {
+      prepare(); synthetic((i, an) -> Mapping.find(a(an.get("evidence")), "id", "synthetic-target")
+          .put("url", "https://shopify.dev.evil.example/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities"));
+      generate(2);
+      synthetic((i, an) -> Mapping.find(a(an.get("evidence")), "id", "synthetic-target").put("api_version", "2025-01"));
+      generate(2);
+    });
+    test("85 Target choice cannot exist only in internal JSON", () -> {
+      prepare(); synthetic((i, an) -> o(i.get("target")).put("selected_operation", "productUpdate"));
+      generate(2);
+    });
+    test("86 Raw chat answers are saved but absent from HTML", () -> {
+      prepare(map("answers", map("Q06", "SYNTHETIC PRIVATE ANSWER SENTINEL")));
+      synthetic();
+      require(!generate(0).contains("SYNTHETIC PRIVATE ANSWER SENTINEL"), "No answer display or embedded answer copy");
+      require(Mapping.read(m.p("Questions.txt")).contains("SYNTHETIC PRIVATE ANSWER SENTINEL"), "Chat persisted");
+      eq(m.prepare(map(), null), 0);
+      eq(o(m.load("input.json").get("answers")).get("Q06"), "SYNTHETIC PRIVATE ANSWER SENTINEL");
+    });
+    test("87 Changed reference clears old explicit operation and version", () -> {
+      prepare(map("shopify_reference", "https://example.myshopify.com/admin/api/2026-07/graphql.json",
+          "shopify_operation", "inventorySetQuantities", "shopify_version", "2026-07"));
+      eq(m.prepare(map("shopify_reference", "https://shopify.dev/docs/api/admin-graphql/2026-10/mutations/productUpdate"), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
+      eq(o(m.load("input.json").get("target")).get("api_version"), "2026-10");
+    });
+    test("88 REST reference requires explicit method and versioned official evidence", () -> {
+      prepare(map("shopify_reference", "https://example.myshopify.com/admin/api/2026-07/products.json",
+          "shopify_operation", "POST /products.json"));
+      synthetic((i, an) -> Mapping.find(a(an.get("evidence")), "id", "synthetic-target").putAll(map(
+          "url", "https://shopify.dev/docs/api/admin-rest/2026-07/resources/product",
+          "operation", "POST /products.json")));
+      generate(0);
+    });
+    test("89 WSDL metadata alone never passes payload check", () -> {
+      prepare();
+      Files.delete(m.p("Current/Source/availability-excerpt.xml"));
+      Files.delete(m.p("Current/Source/availability-normalized.xml"));
+      eq(m.prepare(map(), null), 2);
+      require(a(m.load("preflight.json").get("usable_source_files")).isEmpty(), "No WSDL source fields");
+    });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(
           "68 Windows CMD launcher with configured Java folder",

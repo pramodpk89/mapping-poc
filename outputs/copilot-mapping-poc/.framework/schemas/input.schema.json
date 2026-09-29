@@ -69,17 +69,34 @@
                 "type": "string"
               },
               "optional": {
-                "type": "boolean"
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               },
               "nullable": {
-                "type": "boolean"
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "evidence_files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             },
             "required": [
               "name",
               "type",
               "optional",
-              "nullable"
+              "nullable",
+              "path",
+              "evidence_files"
             ],
             "additionalProperties": false
           }
@@ -114,13 +131,17 @@
             "string",
             "null"
           ]
+        },
+        "endpoint_reference": {
+          "type": "string"
         }
       },
       "required": [
         "platform",
         "api_version",
         "research_method",
-        "selected_operation"
+        "selected_operation",
+        "endpoint_reference"
       ],
       "additionalProperties": false
     },

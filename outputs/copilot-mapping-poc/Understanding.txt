@@ -3,6 +3,9 @@ What this interface does: [Please add one sentence describing the business purpo
 
 Current flow: ERP -> middleware -> Sitecore
 Target flow: ERP -> middleware -> Shopify
+Shopify endpoint/reference:
+Shopify operation:
+Shopify API version:
 Payload origin: Unknown
 
 Additional context:
