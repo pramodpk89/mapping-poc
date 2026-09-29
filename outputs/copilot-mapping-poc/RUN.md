@@ -95,8 +95,8 @@ For non-Windows maintainer testing, an explicit Java 8 executable can run
 the pack relative to itself, independent of the working directory. The Windows launcher
 is the supported analyst entry point and reads java-home.properties before launching.
 
-If Java reports that it cannot find java.dll from a Unicode runtime folder, use a
-support-approved Java 8 folder whose path uses ASCII characters. map.cmd uses existing
-short-path aliases when available; it does not modify Windows settings to create them.
-See TESTING.md for the distinction between Unicode evidence/pack paths and this Java 8
-native-runtime limitation. Spaces in the Java folder are supported.
+The configured Java installation folder must use ASCII characters; spaces are supported.
+The mapping pack, evidence filenames and analyst answers may contain Unicode. Actual Windows
+testing exposed native Java 8 library-loading failures from Unicode runtime folders, so
+map.cmd rejects that runtime configuration with a clear setup message. Use a support-approved
+ASCII Java path. See TESTING.md; do not change registry or short-name settings.

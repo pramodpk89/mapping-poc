@@ -24,7 +24,7 @@ behavior, not Copilot reasoning, real WSDL provenance or business approval. Neve
 their answers into the real pack. Tests do not make ERP or Shopify calls.
 
 Windows-specific tests exercise the CMD launcher, missing/invalid java.home, locked-file
-recovery and a Java runtime copied to a path containing spaces and Unicode. They are
+recovery and a Java runtime copied to an ASCII path containing spaces. A Unicode Java-home\nconfiguration is tested for an explicit, actionable rejection. They are
 reported as outstanding, never passing, when run on another operating system.
 
 The GitHub workflow `Java 8 Windows acceptance` runs the shipped JAR on a Windows runner
@@ -56,11 +56,12 @@ migration reference. It is not used for setup, runs, tests or packaging the acti
 Use map.cmd on Windows, including when paths contain Unicode. It passes filenames through
 Unicode environment values and launches the JAR with a relative name; passing those same
 paths directly to Java 8's native `-jar` command can lose characters outside the system
-code page. The launcher uses an **existing** short-path alias for the Java folder when one
-is available. It never changes the system's short-name settings. If Java itself is stored
-in a Unicode path on a volume without short aliases, Java 8 may fail to locate java.dll;
-choose a support-approved Java folder with ASCII characters in its path in that situation.
-Spaces are supported. No registry changes or administrator steps are performed.
+code page. The Java installation folder itself must use **ASCII characters** (spaces are supported).
+Real Windows tests found native Java 8 DLL/bootstrap failures from a Unicode installation
+folder, even using a short-path alias. The launcher now rejects that configuration with
+a clear message; this is an explicit supported-path restriction, not a passing Unicode
+runtime test. Use a support-approved ASCII Java path. Unicode pack/evidence/answer paths
+are supported and tested separately. No registry or system short-name changes are made.
 
 Git attributes preserve source/documentation bytes across checkouts, because line-ending
 conversion must not silently change the evidence SHA-256 hashes. Pack ZIPs preserve those

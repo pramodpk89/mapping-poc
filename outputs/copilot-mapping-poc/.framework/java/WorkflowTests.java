@@ -1144,9 +1144,19 @@ final class WorkflowTests {
             generate(0);
           });
       test(
-          "72 Windows configured Java folder with spaces and Unicode",
+          "72 Windows Unicode Java-home restriction is actionable",
           () -> {
             Path home = temp.resolve("Java 8 \u03a9 & runtime !");
+            copyRuntime(Paths.get(System.getProperty("java.home")), home);
+            Mapping.write(m.p("java-home.properties"), "java.home=" + home + "\r\n");
+            prepare();
+            synthetic();
+            eq(process("cmd.exe", "/d", "/c", m.p("map.cmd").toString(), "generate"), 2);
+          });
+      test(
+          "75 Windows configured Java folder with spaces",
+          () -> {
+            Path home = temp.resolve("Java 8 runtime with spaces");
             copyRuntime(Paths.get(System.getProperty("java.home")), home);
             Mapping.write(m.p("java-home.properties"), "java.home=" + home + "\r\n");
             prepare();
@@ -1160,7 +1170,8 @@ final class WorkflowTests {
               "69 Windows missing Java configuration",
               "70 Windows invalid Java folder",
               "71 Windows locked report",
-              "72 Windows configured Java folder with spaces and Unicode"))
+              "72 Windows Unicode Java-home restriction",
+              "75 Windows configured Java folder with spaces"))
         skip(name, "Requires Windows; current host is " + System.getProperty("os.name"));
   }
 
