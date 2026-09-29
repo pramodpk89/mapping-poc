@@ -1,38 +1,12 @@
 {
   "reference_baseline": "19e2fc0",
-  "zip_files_verified": 44,
+  "zip_files_verified": 46,
   "preserved_reference_files": 14,
-  "zip_sha256": "5ba2daaf2530f714c8c8d2431f6ef0e01612993b630e5945373a481c86a73635",
-  "jar_sha256": "7c2151b72d2449f876e9b9da80ff6494668adea92e5a288ad3fb0984dcc6846f",
+  "zip_sha256": "82e6aa8c9ebc8e347510afb38b44b332fae24d9b80386213bfb9aa47101cadae",
+  "jar_sha256": "328b8aab8287660c2a30118e1b871e2a62f9e482565c58664ba4e66b3925fadc",
   "original_evidence": "byte-for-byte unchanged",
   "single_working_folder": "outputs/copilot-mapping-poc",
   "real_purpose": "unconfirmed",
-  "real_shopify_target": "not supplied",
-  "wsdl_provenance": "unconfirmed",
-  "windows_ci": {
-    "conclusion": "success",
-    "headSha": "0c41ee8b7f54c224e8731bc4b7fe2998ad6367ab",
-    "status": "completed",
-    "url": "https://github.com/pramodpk89/mapping-poc/actions/runs/36542653010"
-  },
-  "java8-test-results": {
-    "failed": 0,
-    "java_vendor": "Amazon.com Inc.",
-    "java_version": "1.8.0_382",
-    "os": "Mac OS X",
-    "outstanding": 6,
-    "passed": 83,
-    "synthetic": true
-  },
-  "windows-java8-test-results": {
-    "failed": 0,
-    "java_vendor": "Temurin",
-    "java_version": "1.8.0_504",
-    "os": "Windows Server 2025",
-    "outstanding": 0,
-    "passed": 89,
-    "synthetic": true
-  },
-  "class_version": 52,
-  "reports": "Static inspection passed for four scenarios from each host; browser execution unverified due to policy verification failure"
+  "real_shopify_target": "agent-recommended from XML; not business-confirmed",
+  "wsdl_provenance": "unconfirmed"
 }

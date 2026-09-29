@@ -1,22 +1,18 @@
-INTERFACE MAPPING — START HERE
+SOURCE TO SHOPIFY — START HERE
 
-1. Extract the full ZIP and open this entire folder in VS Code with Copilot Agent mode.
-2. Have your team set java.home in java-home.properties to an approved Java 1.8 folder.
-   No installation, extra modules, administrator access or policy bypass is part of this pack.
-3. Put the business XML payload in Current/Source. Keep original evidence unchanged.
-4. In Copilot chat, describe the interface purpose and supply the Shopify API endpoint/reference
-   you want to target. Copilot inspects its fields and requirements and proposes XML-to-Shopify
-   mappings. It asks only for essential missing operation/version context. You do not need
-   to prepare documentation or internal JSON. No Shopify operation is selected by default.
-5. Run /map-interface. Answer follow-up questions in chat; Copilot saves and applies them.
-6. Open Report.html. It is read-only and contains mappings, evidence and unresolved questions.
-   There is no answer-entry section. Give changes in chat and rerun /map-interface.
+1. Open this entire folder in VS Code with Copilot Agent mode.
+2. Supply the XML or business contract in Current/Source.
+3. Run /map-interface. Copilot finds suitable Shopify APIs and maps the attributes.
 
-Missing required inputs stop the run. Last-review.html preserves the last completed review
-through failures and is clearly marked historical. Keep earlier evidence and saved docs.
-WSDL provenance and the real interface purpose are still unconfirmed in the supplied example.
-The incomplete original XML has a separately labelled closing-tag-only normalized copy.
+If you already know the Shopify API, paste its URL in chat. Otherwise Copilot researches it.
+No documentation collection, internal JSON editing or per-field approval is needed to see
+a draft. The report shows actual destinations, examples, rules and focused open questions.
+Proposed custom fields are labelled separately from native Shopify fields and lookups.
 
-The Java installation path must use ASCII characters; spaces are supported. Pack/evidence
-paths and chat answers may contain Unicode. See TESTING.md for actual execution evidence,
-Windows checks and analyst-pilot limitations. All test decisions are synthetic.
+Open Report.html. It is read-only. Give clarifications in chat and rerun /map-interface.
+Copilot saves your answers and updates affected mappings. Confirmed decisions remain separate
+from proposals; the last successful review is preserved through failed reruns.
+
+One-time team setup: set java.home in java-home.properties to an approved Java 1.8 folder.
+Spaces are supported; the Java installation path must be ASCII. No extra runtime modules,
+administrator access or policy bypass. See TESTING.md for checks and known limitations.

@@ -99,6 +99,7 @@
           },
           "status": {
             "enum": [
+              "proposed",
               "ready",
               "needs_input",
               "needs_lookup",
@@ -138,6 +139,12 @@
               "string",
               "null"
             ]
+          },
+          "sample": {
+            "type": "string"
+          },
+          "mapping_kind": {
+            "type": "string"
           }
         },
         "required": [

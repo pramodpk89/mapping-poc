@@ -490,7 +490,7 @@ public final class Mapping {
     for (String k :
         Arrays.asList(
             "require_description",
-            "require_xml_business_payload",
+            "require_source_evidence",
             "require_shopify_endpoint_reference"))
       if (!(cfg.get(k) instanceof Boolean))
         throw new IllegalArgumentException("Framework configuration needs a boolean for " + k);
@@ -501,19 +501,14 @@ public final class Mapping {
             "Understanding.txt",
             "Questions.txt",
             "Decisions.csv",
-            ".framework/Required-inputs.json")) {
+            ".framework/Required-inputs.json", ".framework/target-discovery.json", ".framework/contract-selection.json")) {
       local(p(n));
       if (Files.isRegularFile(p(n))) files.add(p(n));
     }
     List<Object> missing = list(), warnings = list(PROVENANCE), usable = list();
     Map<String, Object> u = understanding();
-    if (Boolean.TRUE.equals(cfg.get("require_description"))
-        && unknown(u.get("what this interface does")))
-      missing.add(
-          "Understanding.txt: provide one sentence describing the business purpose after What this"
-              + " interface does:.");
-    if (unknown(u.get("interface name")))
-      missing.add("Understanding.txt: provide the interface name.");
+    if (unknown(u.get("what this interface does")))
+      warnings.add("Business purpose has not been confirmed. Agent-inferred mappings are proposals; this does not block useful field mapping.");
     try {
       List<Object> fields = payloadFields(obj(load("input.json").get("source")), warnings);
       for (Object field : fields)
@@ -672,8 +667,9 @@ public final class Mapping {
       }
       collectPayload(rootElement, "", relative, fields);
     }
+    if (fields.isEmpty()) fields.putAll(contractFields(warnings));
     if (fields.isEmpty()) throw new IllegalArgumentException(
-        "Current/Source: supply an XML business payload. WSDL/XSD metadata, notes, JSON or a normalized copy without its original cannot supply mapping fields.");
+        "Current/Source: supply readable XML or a business XSD/WSDL contract. Service metadata and an orphaned normalized copy are not business fields.");
     Map<String, Integer> counts = new HashMap<>();
     for (Object value : fields.values()) {
       String name = str(obj(value).get("name"));
@@ -686,15 +682,125 @@ public final class Mapping {
     return new ArrayList<>(fields.values());
   }
 
+  static final String XSD = "http://www.w3.org/2001/XMLSchema";
+
+  String qname(Element e, String value) {
+    int colon = value.indexOf(':');
+    String ns = e.lookupNamespaceURI(colon < 0 ? null : value.substring(0, colon));
+    return "{" + str(ns) + "}" + (colon < 0 ? value : value.substring(colon + 1));
+  }
+
+  Map<String, Object> contractFields(List<Object> warnings) throws Exception {
+    Map<String, Object> result = map(), selection = Files.isRegularFile(fw.resolve("contract-selection.json"))
+        ? load("contract-selection.json") : map();
+    List<Element> roots = new ArrayList<>();
+    List<String> origins = new ArrayList<>();
+    Map<String, Element> declarations = new HashMap<>();
+    for (Path file : files(p("Current/Source"))) {
+      String relative = root.relativize(file).toString().replace('\\', '/');
+      if (!relative.matches("(?i).*\\.(xsd|wsdl)$")) continue;
+      if (!selection.isEmpty() && !relative.equals(selection.get("file"))) continue;
+      Document doc = xml(file);
+      NodeList schemas = doc.getElementsByTagNameNS(XSD, "schema");
+      for (int n = 0; n < schemas.getLength(); n++) {
+        Element schema = (Element) schemas.item(n);
+        NodeList children = schema.getChildNodes();
+        for (int k = 0; k < children.getLength(); k++) {
+          if (!(children.item(k) instanceof Element)) continue;
+          Element child = (Element) children.item(k);
+          if (!XSD.equals(child.getNamespaceURI()) || !child.hasAttribute("name")) continue;
+          String key = "{" + schema.getAttribute("targetNamespace") + "}" + child.getAttribute("name");
+          declarations.put(child.getLocalName() + ":" + key, child);
+          if ("element".equals(child.getLocalName()) && (!relative.endsWith(".wsdl") || !selection.isEmpty())) {
+            if (selection.isEmpty() || (child.getAttribute("name").equals(selection.get("element"))
+                && schema.getAttribute("targetNamespace").equals(str(selection.get("namespace"))))) {
+              roots.add(child); origins.add(relative);
+            }
+          }
+        }
+      }
+    }
+    if (roots.isEmpty()) return result;
+    if (roots.size() != 1) throw new IllegalArgumentException(
+        "The contract has multiple business messages. Copilot must identify the relevant message from context and save contract-selection.json; ask only if its purpose is ambiguous.");
+    contractElement(roots.get(0), "", origins.get(0), declarations, result, new HashSet<String>());
+    warnings.add("Fields extracted from business schema declarations in " + origins.get(0)
+        + "; service metadata is excluded. Contract role/provenance is not a business confirmation.");
+    return result;
+  }
+
+  void contractElement(Element e, String parent, String file, Map<String, Element> declarations,
+      Map<String, Object> fields, Set<String> active) {
+    if (e.hasAttribute("ref")) {
+      Element ref = declarations.get("element:" + qname(e, e.getAttribute("ref")));
+      if (ref == null) throw new IllegalArgumentException("Contract references an unavailable business element; Copilot must inspect the supplied contract dependencies.");
+      e = ref;
+    }
+    String name = e.getAttribute("name");
+    if (name.isEmpty()) return;
+    String path = parent + "/" + name;
+    Element structure = null;
+    NodeList children = e.getChildNodes();
+    for (int n = 0; n < children.getLength(); n++)
+      if (children.item(n) instanceof Element && "complexType".equals(children.item(n).getLocalName())) structure = (Element) children.item(n);
+    String type = e.getAttribute("type"), typeKey = qname(e, type);
+    if (structure == null && !type.isEmpty()) structure = declarations.get("complexType:" + typeKey);
+    if (structure != null) {
+      String token = file + ":" + typeKey + ":" + System.identityHashCode(structure);
+      if (!active.add(token)) throw new IllegalArgumentException("Recursive contract needs a bounded business message selection; no truncated inventory was produced.");
+      contractMembers(structure, path, file, declarations, fields, active);
+      active.remove(token);
+    } else {
+      if (!type.isEmpty() && !typeKey.startsWith("{" + XSD + "}")
+          && !declarations.containsKey("simpleType:" + typeKey))
+        throw new IllegalArgumentException("Unresolved contract type " + type + "; supply its referenced schema.");
+      payloadField(fields, path, name, file);
+      Map<String, Object> field = obj(fields.get(path));
+      field.put("type", "Contract declaration: " + (type.isEmpty() ? "text" : type));
+      field.put("optional", "0".equals(e.getAttribute("minOccurs")));
+      field.put("nullable", "true".equals(e.getAttribute("nillable")));
+    }
+  }
+
+  void contractMembers(Element e, String parent, String file, Map<String, Element> declarations,
+      Map<String, Object> fields, Set<String> active) {
+    NodeList children = e.getChildNodes();
+    for (int n = 0; n < children.getLength(); n++) {
+      if (!(children.item(n) instanceof Element)) continue;
+      Element child = (Element) children.item(n);
+      if (!XSD.equals(child.getNamespaceURI())) continue;
+      String kind = child.getLocalName();
+      if ("element".equals(kind)) contractElement(child, parent, file, declarations, fields, active);
+      else if ("attribute".equals(kind) && child.hasAttribute("name")) {
+        String path = parent + "/@" + child.getAttribute("name");
+        payloadField(fields, path, "@" + child.getAttribute("name"), file);
+        obj(fields.get(path)).put("type", "Contract declaration: " + child.getAttribute("type"));
+      } else if (Arrays.asList("sequence", "all", "choice", "complexContent", "simpleContent").contains(kind))
+        contractMembers(child, parent, file, declarations, fields, active);
+      else if (Arrays.asList("extension", "restriction", "group", "any", "attributeGroup").contains(kind))
+        throw new IllegalArgumentException("This contract uses " + kind + "; Copilot must resolve its business structure or request an XML example. No guessed fields were emitted.");
+    }
+  }
+
   Map<String, Object> targetInput(Map<String, Object> u) throws Exception {
-    String reference = str(u.get("shopify endpoint/reference")).trim();
+    String requested = str(u.get("shopify endpoint/reference")).trim(), reference = requested;
+    Map<String, Object> discovered = map();
+    if (Files.isRegularFile(fw.resolve("target-discovery.json"))) {
+      Map<String, Object> value = load("target-discovery.json");
+      if (requested.equals(str(value.get("requested_reference")))) discovered = value;
+    }
+    if (unknown(reference)) reference = str(discovered.get("reference"));
+    if (unknown(reference)) return map("platform", "Shopify", "endpoint_reference", "",
+        "api_version", "", "research_method", "agent_discovery_pending", "selected_operation", null,
+        "selection_basis", "agent_proposal");
     URI uri;
     try { uri = new URI(reference); }
     catch (Exception e) { throw new IllegalArgumentException("Share the Shopify API endpoint/reference in Copilot chat."); }
     if (!"https".equals(uri.getScheme()) || uri.getHost() == null || uri.getUserInfo() != null
-        || uri.getQuery() != null || uri.getFragment() != null || unknown(uri.getPath()))
+        || uri.getQuery() != null || unknown(uri.getPath()))
       throw new IllegalArgumentException("Share the Shopify API endpoint/reference in Copilot chat (HTTPS URL without credentials or query parameters).");
     String operation = str(u.get("shopify operation")).trim();
+    if (unknown(operation)) operation = str(discovered.get("operation"));
     Matcher op = Pattern.compile("/(?:mutations|queries)/([^/]+)/*$").matcher(uri.getPath());
     if (op.find()) {
       if (!unknown(operation) && !operation.equals(op.group(1)))
@@ -702,19 +808,17 @@ public final class Mapping {
       operation = op.group(1);
     }
     String version = str(u.get("shopify api version")).trim();
+    if (unknown(version)) version = str(discovered.get("api_version"));
     Matcher ver = Pattern.compile("/(20[0-9]{2}-(?:01|04|07|10))(?:/|$)").matcher(uri.getPath());
     if (ver.find()) {
       if (!unknown(version) && !version.equals(ver.group(1)))
         throw new IllegalArgumentException("Shopify API version conflicts with the supplied endpoint/reference.");
       version = ver.group(1);
     }
-    // REST resource URLs identify an operation only with an HTTP method supplied in chat.
-    if (unknown(operation)) throw new IllegalArgumentException(
-        "Shopify endpoint/reference is saved. Which operation should it target? A generic GraphQL URL alone does not identify one.");
-    if (!version.matches("20[0-9]{2}-(?:01|04|07|10)")) throw new IllegalArgumentException(
-        "Shopify endpoint/reference is saved. Confirm the API version, or let Copilot resolve the version of the official reference.");
+    // Intake permits unresolved operation/version; the agent researches them before generation.
     return map("platform", "Shopify", "endpoint_reference", reference, "api_version", version,
-        "research_method", "agent_inspects_analyst_reference", "selected_operation", operation);
+        "research_method", "agent_inspects_official_documentation", "selected_operation", unknown(operation) ? null : operation,
+        "selection_basis", unknown(requested) ? "agent_proposal" : "analyst_reference");
   }
 
   static void schema(Object value, Map<String, Object> s, String at) {
@@ -791,7 +895,10 @@ public final class Mapping {
       throw new IllegalArgumentException("Input and analysis refer to different interfaces");
     Map<String, Object> target = obj(in.get("target"));
     String operation = str(target.get("selected_operation")), version = str(target.get("api_version"));
+    if (unknown(operation) || !version.matches("20[0-9]{2}-(?:01|04|07|10)"))
+      throw new IllegalArgumentException("Copilot must discover the relevant Shopify operation/version from the source and official API references before generating mappings.");
     Map<String, Object> selected = find(arr(a.get("target_candidates")), "operation", operation);
+
     if (selected == null || !"selected".equals(selected.get("state")))
       throw new IllegalArgumentException("Analysis must inspect the supplied Shopify operation and mark it selected.");
     boolean official = false;
@@ -845,6 +952,24 @@ public final class Mapping {
       String f = str(row.get("source_field"));
       if (!Objects.equals(row.get("source_type"), find(fields, "name", f).get("type")))
         throw new IllegalArgumentException(f + ": source type does not match the XML payload inventory");
+      if ("proposed".equals(row.get("status"))) {
+        if (!"proposal".equals(row.get("decision_basis")) || !unknown(row.get("confirmed_by"))
+            || unknown(row.get("target")) || str(row.get("target")).startsWith("Pending")
+            || unknown(row.get("proposed_rule")))
+          throw new IllegalArgumentException(f + ": a proposal needs a concrete destination and rule, without invented confirmation.");
+        boolean sourceEvidence = false, targetEvidence = false;
+        for (Object id : arr(row.get("evidence_ids"))) {
+          Map<String, Object> e = find(arr(a.get("evidence")), "id", id);
+          if (e == null) continue;
+          if (arr(find(fields, "name", f).get("evidence_files")).contains(e.get("url"))
+              && e.containsKey("sha256")) sourceEvidence = true;
+          URI url = new URI(str(e.get("url")));
+          if ("https".equals(url.getScheme()) && "shopify.dev".equals(url.getHost())
+              && version.equals(e.get("api_version")) && !unknown(e.get("note"))) targetEvidence = true;
+        }
+        if (!sourceEvidence || !targetEvidence)
+          throw new IllegalArgumentException(f + ": proposed mapping must cite its source file and inspected Shopify API evidence.");
+      }
       if (Arrays.asList("ready", "excluded").contains(row.get("status"))) {
         if (!"confirmed".equals(row.get("decision_basis")) || unknown(row.get("confirmed_by")))
           throw new IllegalArgumentException(
@@ -914,7 +1039,7 @@ public final class Mapping {
     for (Object v : arr(analysis.get("mappings"))) {
       Map<String, Object> m = obj(v);
       if (changed.contains(m.get("source_field"))
-          && Arrays.asList("ready", "excluded").contains(m.get("status"))) {
+          && Arrays.asList("ready", "excluded", "proposed").contains(m.get("status"))) {
         m.putAll(
             map(
                 "status",
@@ -1236,7 +1361,7 @@ public final class Mapping {
             if (old != null
                 && (!Objects.equals(old.get("status"), row.get("status"))
                     || changed.contains(row.get("source_field"))
-                        && Arrays.asList("ready", "excluded").contains(old.get("status")))
+                        && Arrays.asList("ready", "excluded", "proposed").contains(old.get("status")))
                 && str(old.get("reason")).trim().equals(str(row.get("reason")).trim()))
               throw new IllegalArgumentException(
                   row.get("source_field")

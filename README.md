@@ -5,13 +5,13 @@ Use one folder: **[copilot-mapping-poc](outputs/copilot-mapping-poc)**.
 It includes the `/map-interface` skill, Java 8 helper, launcher, instructions, tests and evidence.
 
 1. Set the approved Java 1.8 folder in `java-home.properties`.
-2. Give Copilot the XML payload, interface purpose and intended Shopify API endpoint/reference.
-3. Run `/map-interface`. Copilot inspects the target API and proposes XML-to-Shopify mappings.
+2. Give Copilot the XML or business contract. A preferred Shopify API URL is optional.
+3. Run `/map-interface`. Copilot discovers suitable APIs and produces concrete attribute mappings with evidence.
 4. Answer clarifications in chat and rerun. `Report.html` is read-only.
 
 No documentation curation, internal JSON editing, extra modules or administrator access is
-required from analysts. No Shopify operation is selected by default. Incomplete inputs block
-mapping analysis. Changed decisions reopen affected mappings; unrelated answers and the last
+required from analysts. The agent recommends APIs from the source instead of applying a fixed default. Missing source
+evidence blocks; missing purpose prose or a URL does not prevent useful proposals. Changed decisions reopen affected mappings; unrelated answers and the last
 successful review are preserved. WSDL provenance and the real interface purpose remain unconfirmed.
 
 [Start here](outputs/copilot-mapping-poc/START-HERE.txt) ·

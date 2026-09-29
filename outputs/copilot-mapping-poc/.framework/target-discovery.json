@@ -1,0 +1,9 @@
+{
+  "requested_reference": "",
+  "reference": "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities",
+  "operation": "inventorySetQuantities",
+  "api_version": "2026-07",
+  "reason": "Agent recommendation from the actual XML: per-SKU AvailableQuantity and InStock values suggest an availability snapshot. Absolute quantity writes are a conditional design proposal, not confirmed source authority. Supplementary metafields preserve availability text and external identifiers.",
+  "retrieved_on": "2026-09-29",
+  "business_confirmation": false
+}

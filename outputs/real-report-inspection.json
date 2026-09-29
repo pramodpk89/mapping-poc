@@ -1,0 +1,9 @@
+{
+  "method": "Static HTML and embedded data inspection; browser not executed",
+  "source": "Actual supplied XML",
+  "proposed": 5,
+  "needs_clarification": 2,
+  "confirmed": 0,
+  "synthetic": false,
+  "sha256": "7148ea828cab0e8edab6fee61a351a55e1bc48532795e545d3a9801d9e8be141"
+}

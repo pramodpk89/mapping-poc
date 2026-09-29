@@ -3,7 +3,7 @@ require 'json'
 require 'digest'
 root = ARGV.fetch(0, 'outputs/java8-test-results')
 raise "Execution suite failed; reports may be stale" unless JSON.parse(File.read(File.join(root, "results.json"))).fetch("failed")==0
-rows = %w[basic clarified reopened alternate-target].map do |name|
+rows = %w[basic clarified reopened alternate-target proposed].map do |name|
   file = File.join(root, 'scenarios', name, 'Report.html')
   html = File.read(file)
   payload = JSON.parse(html.match(/<script id="pack-data" type="application\/json">(.*?)<\/script>/m)[1])
@@ -14,6 +14,7 @@ rows = %w[basic clarified reopened alternate-target].map do |name|
   raise 'mapping coverage' unless analysis['mappings'].map{|m|m['source_field']}.sort == input['source']['fields'].map{|f|f['name']}.sort
   raise 'missing XML trace' unless input['source']['fields'].all?{|f|f['path'].start_with?('/WebItemAvailability/result/WebAvailabilityData/') && f['evidence_files']==['Current/Source/availability-excerpt.xml'] && f['type'].start_with?('XML text')}
   raise 'resolved question rendering' unless html.include?("filter(q=>q.review_status!=='resolved')")
+  raise "Proposal not generated" if name=="proposed" && analysis["mappings"].none?{|m|m["status"]=="proposed"}
   expected = name=='alternate-target' ? 'productUpdate' : 'inventorySetQuantities'
   raise 'wrong selected fixture target' unless input['target']['selected_operation']==expected
   row=analysis['mappings'].find{|m|m['source_field']=='SKUType'}

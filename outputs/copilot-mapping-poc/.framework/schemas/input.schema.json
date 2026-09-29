@@ -134,6 +134,12 @@
         },
         "endpoint_reference": {
           "type": "string"
+        },
+        "selection_basis": {
+          "enum": [
+            "agent_proposal",
+            "analyst_reference"
+          ]
         }
       },
       "required": [

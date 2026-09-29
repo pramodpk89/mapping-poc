@@ -68,31 +68,16 @@ bytes too. The portable suite is also compiled and run on a real local Java 8 ru
 
 ## Current validation
 
-Actual Java 8 execution:
+The new source-first workflow has executed **90 portable checks, 0 failures** on
+Corretto Java 1.8.0_382/macOS. Six Windows-only checks are pending in the new CI run.
+The preceding 89-check Windows result does not establish validation of this implementation.
 
-- macOS / Corretto 1.8.0_382: **83 passed, 0 failed**. Six Windows-only checks were marked
-  outstanding on this host and then executed in Windows CI.
-- Windows Server 2025 / Temurin 1.8.0_504: **89 passed, 0 failed, 0 outstanding**.
-  [Successful CI run](https://github.com/pramodpk89/mapping-poc/actions/runs/36542653010)
-  executed the shipped JAR/launcher and compiled the sources with JDK 8 at implementation
-  commit `0c41ee8b7f54c224e8731bc4b7fe2998ad6367ab`.
+New coverage includes missing-purpose discovery, optional URLs, concrete proposals without
+business confirmation, source/API evidence requirements, discovery provenance, preference
+for a supplied URL, XSD/WSDL business-element extraction and selective reopening of proposals.
+Synthetic fixture data remains confined to tests. The real Report.html is generated separately
+from the supplied XML and actual official API research, without invented business approvals.
 
-Subsequent validation-record/documentation commits do not change the tested JAR or sources.
-
-Cases 76-89 cover XML extraction without WSDL/research bundles, verified normalization,
-orphaned copies, namespaces and duplicate names, SOAP/WSDL metadata, endpoint-only target
-setup, operation/version clarification, target changes, official citations, saved chat input,
-internal-only target tampering and REST method/reference handling. These use synthetic fixtures;
-no selected operation, decision or research finding in a test establishes real business facts.
-
-Four generated scenarios are checked statically: basic, clarified, reopened and alternate
-target. The checks inspect HTML/embedded JSON, XML paths, saved answers and statuses. Browser
-visual inspection is **unverified**: the browser tool could not verify the admin-enforced
-policy and denied access to the local report preview. No bypass was attempted. Browser
-JavaScript, Print/PDF and an actual analyst Copilot pilot were not exercised.
-
-The real pack blocks on missing purpose and Shopify API reference. The supplied XML is usable
-through its verified closing-tag-only copy. WSDL provenance remains unconfirmed. Original
-XML/WSDL bytes and saved Shopify documentation are preserved. The JAR makes no live store calls.
-
-Repository execution records: outputs/java8-test-results/ and outputs/windows-java8-test-results/.
+Report checks are static HTML/data inspections. Browser execution remains unverified because
+the browser could not verify admin-enforced policy. Print/PDF and an actual Copilot analyst
+pilot are not claimed as executed. No live store calls are made by the mapping run or tests.

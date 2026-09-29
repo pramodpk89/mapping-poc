@@ -94,6 +94,14 @@ final class WorkflowTests {
     copyTree(template, root);
     m = new Mapping(root);
     try {
+      // Tests start with draft dispositions; never copy confirmations into the real pack.
+      Map<String, Object> fixture = m.load("analysis.json");
+      for (Object row : a(fixture.get("mappings"))) {
+        o(row).put("status", "needs_input");
+        o(row).put("confirmed_by", null);
+        o(row).put("decision_basis", "proposal");
+      }
+      Mapping.save(m.fw.resolve("analysis.json"), fixture);
       // Fixture target only: never copied into the real analyst pack.
       m.setUnderstanding(map("Shopify endpoint/reference",
           "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/inventorySetQuantities"));
@@ -322,13 +330,11 @@ final class WorkflowTests {
 
   void suite() throws Exception {
     test(
-        "01 Missing description blocks",
+        "01 Missing purpose allows evidence-backed proposals",
         () -> {
-          eq(m.prepare(map(), null), 2);
-          String html = Mapping.read(m.p("Report.html"));
-          require(
-              html.contains("Understanding.txt") && !html.contains("mapping-rows"),
-              "Actionable missing-purpose notice");
+          eq(m.prepare(map(), null), 0);
+          require(a(m.load("preflight.json").get("warnings")).stream()
+              .anyMatch(w -> w.toString().contains("purpose has not been confirmed")), "Purpose uncertainty retained");
         });
     test(
         "02 Basic seven-field report",
@@ -360,7 +366,7 @@ final class WorkflowTests {
               Mapping.read(m.p("Understanding.txt")).getBytes(StandardCharsets.UTF_16));
           eq(m.prepare(map(), null), 0);
         });
-    test("05 Unknown purpose blocks", () -> eq(m.prepare(map("purpose", "Unknown."), null), 2));
+    test("05 Unknown purpose is not invented", () -> eq(m.prepare(map("purpose", "Unknown."), null), 0));
     test(
         "06 Missing source blocks",
         () -> {
@@ -386,11 +392,13 @@ final class WorkflowTests {
               "Malformed sample warning");
         });
     test(
-        "09 Missing target blocks",
+        "09 Missing URL allows agent discovery",
         () -> {
-          prepare();
+          Files.deleteIfExists(m.fw.resolve("target-discovery.json"));
           m.setUnderstanding(map("Shopify endpoint/reference", ""));
-          eq(m.prepare(map(), null), 2);
+          eq(m.prepare(map(), null), 0);
+          eq(o(m.load("input.json").get("target")).get("selected_operation"), null);
+          synthetic(); generate(2);
         });
     test(
         "10 Unsafe endpoint reference blocks",
@@ -581,7 +589,8 @@ final class WorkflowTests {
           synthetic();
           generate(0);
           byte[] saved = Files.readAllBytes(m.p("Last-review.html"));
-          eq(m.prepare(map("purpose", "unknown"), null), 2);
+          sourceMissing();
+          eq(m.prepare(map(), null), 2);
           generate(2);
           require(
               Arrays.equals(saved, Files.readAllBytes(m.p("Last-review.html"))),
@@ -857,7 +866,7 @@ final class WorkflowTests {
           Mapping.write(m.p("Current/Source/payload.json"), "{\"SKU\":\"a\"}");
           eq(m.prepare(map(), null), 2);
           require(
-              Mapping.read(m.p("Report.html")).contains("XML business payload"),
+              Mapping.read(m.p("Report.html")).contains("readable XML"),
               "Explicit scope limitation");
         });
     test(
@@ -951,7 +960,7 @@ final class WorkflowTests {
           require(!PatternHolder.EDIT.matcher(html).find(), "No answer inputs or contenteditable");
           for (String token : Arrays.asList("answer-count", "updateAnswers", "input.answers", "recorded answers", "your answers", "save-answers", "id='answer-"))
             require(!html.contains(token), "Removed answer feature: " + token);
-          require(html.contains("field.path") && html.contains("XML payload evidence"), "Payload trace rendered");
+          require(html.contains("field.path") && html.contains("Source evidence"), "Payload trace rendered");
 
           require(
               html.contains("Read-only report")
@@ -967,7 +976,7 @@ final class WorkflowTests {
               "No synthetic purpose in real pack");
           require(
               Mapping.unknown(m.understanding().get("payload origin")), "Unknown payload origin");
-          eq(m.prepare(map(), null), 2);
+          eq(m.prepare(map(), null), 0);
           require(
               a(m.load("preflight.json").get("warnings")).contains(Mapping.PROVENANCE),
               "Provenance warning");
@@ -1158,10 +1167,10 @@ final class WorkflowTests {
       List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
       eq(fields.size(), 1); eq(o(fields.get(0)).get("name"), "Sku");
     });
-    test("81 Generic GraphQL endpoint asks only for missing operation", () -> {
+    test("81 Generic GraphQL URL reaches agent research before clarification", () -> {
       eq(m.prepare(map("purpose", "SYNTHETIC test", "shopify_reference",
-          "https://example.myshopify.com/admin/api/2026-07/graphql.json"), null), 2);
-      require(Mapping.read(m.p("Report.html")).contains("Which operation"), "Essential clarification");
+          "https://example.myshopify.com/admin/api/2026-07/graphql.json"), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), null);
       eq(m.prepare(map("shopify_operation", "productUpdate"), null), 0);
       eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
       synthetic(); generate(0);
@@ -1169,7 +1178,7 @@ final class WorkflowTests {
     });
     test("82 Versionless API reference persists pending essential clarification", () -> {
       eq(m.prepare(map("purpose", "SYNTHETIC test", "shopify_reference",
-          "https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate"), null), 2);
+          "https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate"), null), 0);
       require(Mapping.read(m.p("Understanding.txt")).contains("productUpdate"), "Saved reference");
       eq(m.prepare(map("shopify_version", "2026-07"), null), 0);
       eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
@@ -1221,6 +1230,61 @@ final class WorkflowTests {
       Files.delete(m.p("Current/Source/availability-normalized.xml"));
       eq(m.prepare(map(), null), 2);
       require(a(m.load("preflight.json").get("usable_source_files")).isEmpty(), "No WSDL source fields");
+    });
+    test("90 Proposed attribute maps without analyst confirmation", () -> {
+      prepare();
+      synthetic((i, an) -> row(an, "AvailableQuantity").putAll(map(
+          "status", "proposed", "target", "inventorySetQuantities.input.quantities[].quantity",
+          "proposed_rule", "SYNTHETIC: preserve integer quantity; confirm stock basis before implementation.",
+          "evidence_ids", list("source-sample", "synthetic-target"))));
+      String html = generate(0);
+      require(html.contains("Proposed mapping") && html.contains("input.quantities[].quantity"), "Actual destination is displayed");
+      eq(a(m.load("input.json").get("known_rules")).size(), 0);
+      exportScenario("proposed");
+    });
+    test("91 Proposed mapping without target evidence is rejected", () -> {
+      prepare(); synthetic((i, an) -> row(an, "AvailableQuantity").putAll(map(
+          "status", "proposed", "evidence_ids", list("source-sample"))));
+      generate(2);
+    });
+    test("92 Agent discovery never becomes an analyst-supplied URL", () -> {
+      m.setUnderstanding(map("Shopify endpoint/reference", ""));
+      Mapping.save(m.fw.resolve("target-discovery.json"), map("requested_reference", "",
+          "reference", "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/metafieldsSet",
+          "operation", "metafieldsSet", "api_version", "2026-07", "reason", "SYNTHETIC discovery"));
+      eq(m.prepare(map(), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selection_basis"), "agent_proposal");
+      require(Mapping.unknown(m.understanding().get("shopify endpoint/reference")), "No invented analyst input");
+    });
+    test("93 Supplied API URL takes precedence over prior discovery", () -> {
+      prepare(map("shopify_reference", "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/productUpdate"));
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
+      eq(o(m.load("input.json").get("target")).get("selection_basis"), "analyst_reference");
+    });
+    test("94 Simple XSD business contract works without XML", () -> {
+      sourceMissing();
+      Mapping.write(m.p("Current/Source/order.xsd"), "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+          + "<xs:element name='Order'><xs:complexType><xs:sequence><xs:element name='SKU' type='xs:string'/>"
+          + "<xs:element name='Quantity' type='xs:int'/></xs:sequence></xs:complexType></xs:element></xs:schema>");
+      prepare();
+      List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
+      eq(fields.size(), 2); eq(o(fields.get(0)).get("path"), "/Order/SKU");
+    });
+    test("95 WSDL requires relevant business element selection, never service metadata", () -> {
+      sourceMissing();
+      Mapping.write(m.p("Current/Source/order.wsdl"), "<w:definitions xmlns:w='http://schemas.xmlsoap.org/wsdl/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+          + "<w:types><xs:schema targetNamespace='urn:order'><xs:element name='Order'><xs:complexType><xs:sequence>"
+          + "<xs:element name='SKU' type='xs:string'/></xs:sequence></xs:complexType></xs:element></xs:schema></w:types>"
+          + "<w:service name='UnconfirmedService'/></w:definitions>");
+      Mapping.save(m.fw.resolve("contract-selection.json"), map("file", "Current/Source/order.wsdl", "namespace", "urn:order", "element", "Order"));
+      prepare(); eq(a(o(m.load("input.json").get("source")).get("fields")).size(), 1);
+    });
+    test("96 Changed source reopens proposed mappings", () -> {
+      prepare(); synthetic((i, an) -> row(an, "AvailableQuantity").putAll(map("status", "proposed",
+          "evidence_ids", list("source-sample", "synthetic-target"))));
+      generate(0);
+      eq(m.prepare(map("answers", map("Q03", "SYNTHETIC: quantity means an adjustment delta.")), null), 0);
+      eq(row(m.load("analysis.json"), "AvailableQuantity").get("status"), "needs_input");
     });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(
