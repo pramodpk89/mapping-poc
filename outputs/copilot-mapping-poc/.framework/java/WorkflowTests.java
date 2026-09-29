@@ -305,6 +305,8 @@ final class WorkflowTests {
       hashes.put(m.root.relativize(p).toString(), Mapping.hash(Files.readAllBytes(p)));
     for (Path p : m.files(m.p("Shopify")))
       hashes.put(m.root.relativize(p).toString(), Mapping.hash(Files.readAllBytes(p)));
+    for (Path p : m.files(m.fw.resolve("references/shopify")))
+      hashes.put(m.root.relativize(p).toString(), Mapping.hash(Files.readAllBytes(p)));
     return hashes;
   }
 
@@ -320,8 +322,10 @@ final class WorkflowTests {
             "Decisions.csv"))
       if (Files.exists(m.p(file)))
         Files.copy(m.p(file), dir.resolve(file), StandardCopyOption.REPLACE_EXISTING);
-    for (String folder : Arrays.asList("Current", "Shopify"))
+    for (String folder : Arrays.asList("Current", "Shopify")) {
+      deleteTree(dir.resolve(folder));
       copyTree(m.p(folder), dir.resolve(folder));
+    }
     Mapping.write(
         dir.resolve("README.txt"),
         "SYNTHETIC TEST EVIDENCE ONLY. Do not import these answers or decisions into the real pack."
@@ -1125,8 +1129,8 @@ final class WorkflowTests {
     test("76 XML fields survive removal of all WSDL and saved research", () -> {
       Files.delete(m.p("Current/Source/checkout-1.wsdl"));
       Files.delete(m.p("Current/Source/checkout-2.wsdl"));
-      Files.delete(m.p("Shopify/Target-reference.json"));
-      deleteTree(m.p("Shopify/Docs"));
+      Files.delete(m.fw.resolve("references/shopify/Target-reference.json"));
+      deleteTree(m.fw.resolve("references/shopify/Docs"));
       prepare();
       List<Object> fields = a(o(m.load("input.json").get("source")).get("fields"));
       eq(fields.size(), 7);
@@ -1179,7 +1183,7 @@ final class WorkflowTests {
     test("82 Versionless API reference persists pending essential clarification", () -> {
       eq(m.prepare(map("purpose", "SYNTHETIC test", "shopify_reference",
           "https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate"), null), 0);
-      require(Mapping.read(m.p("Understanding.txt")).contains("productUpdate"), "Saved reference");
+      require(Mapping.read(m.p("Shopify/API-Endpoint.txt")).contains("productUpdate"), "Saved reference");
       eq(m.prepare(map("shopify_version", "2026-07"), null), 0);
       eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
     });
@@ -1296,6 +1300,35 @@ final class WorkflowTests {
       Mapping.write(m.p("Current/Source/new-context.txt"), "SYNTHETIC new evidence");
       eq(m.prepare(map(), null), 0);
       eq(o(m.load("input.json").get("target")).get("selected_operation"), null);
+    });
+    test("98 Single endpoint file drives target without analyst documentation", () -> {
+      deleteTree(m.fw.resolve("references/shopify"));
+      String url = "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/productUpdate";
+      Mapping.write(m.p("Shopify/API-Endpoint.txt"), "# Analyst's preferred API\n\n" + url + "\n");
+      prepare();
+      eq(o(m.load("input.json").get("target")).get("endpoint_reference"), url);
+      eq(o(m.load("input.json").get("target")).get("selected_operation"), "productUpdate");
+      eq(o(m.load("input.json").get("target")).get("selection_basis"), "analyst_reference");
+    });
+    test("99 Chat URL persists in the same file and reopens affected mappings", () -> {
+      prepare(); synthetic(); generate(0);
+      byte[] last = Files.readAllBytes(m.p("Last-review.html"));
+      String url = "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/productUpdate";
+      eq(m.prepare(map("shopify_reference", url), null), 0);
+      eq(Mapping.read(m.p("Shopify/API-Endpoint.txt")).trim(), url);
+      require(!Mapping.read(m.p("Understanding.txt")).contains("Shopify endpoint/reference:"), "No competing URL entry");
+      for (Object row : a(m.load("analysis.json").get("mappings")))
+        require(!"ready".equals(o(row).get("status")), "Old target confirmations reopened");
+      require(Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))), "Last successful review preserved");
+      eq(m.prepare(map("shopify_reference", ""), null), 0);
+      eq(o(m.load("input.json").get("target")).get("selection_basis"), "agent_proposal");
+    });
+    test("100 Invalid endpoint file preserves last successful review", () -> {
+      prepare(); synthetic(); generate(0);
+      byte[] last = Files.readAllBytes(m.p("Last-review.html"));
+      Mapping.write(m.p("Shopify/API-Endpoint.txt"), "not a URL\n");
+      eq(m.prepare(map(), null), 2);
+      require(Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))), "Last successful review preserved");
     });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(

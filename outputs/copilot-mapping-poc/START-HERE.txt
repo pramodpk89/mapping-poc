@@ -4,7 +4,8 @@ SOURCE TO SHOPIFY — START HERE
 2. Supply the XML or business contract in Current/Source.
 3. Run /map-interface. Copilot finds suitable Shopify APIs and maps the attributes.
 
-If you already know the Shopify API, paste its URL in chat. Otherwise Copilot researches it.
+Shopify setup is one URL: paste it in Shopify/API-Endpoint.txt or Copilot chat.
+Leave it blank if you want Copilot to discover the API from your source XML.
 No documentation collection, internal JSON editing or per-field approval is needed to see
 a draft. The report shows actual destinations, examples, rules and focused open questions.
 Proposed custom fields are labelled separately from native Shopify fields and lookups.

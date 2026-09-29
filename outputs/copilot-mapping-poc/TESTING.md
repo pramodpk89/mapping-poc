@@ -68,12 +68,13 @@ bytes too. The portable suite is also compiled and run on a real local Java 8 ru
 
 ## Current validation
 
-The new source-first workflow has executed **91 portable checks, 0 failures** on
-Corretto Java 1.8.0_382/macOS. The six Windows-only checks were then executed in Windows CI:
-**97 passed, 0 failed, 0 outstanding** on Windows Server 2025 / Temurin Java 1.8.0_504.
-[Successful run](https://github.com/pramodpk89/mapping-poc/actions/runs/36544810524) executed
-the shipped JAR/launcher and compiled sources with JDK 8 at `c8196169c2a60239f781bbc6f6a378206e9ea781`.
-Later validation-record/documentation commits do not change that tested implementation.
+The simplified endpoint-only workflow has executed **94 portable checks, 0 failures** on
+Corretto Java 1.8.0_382/macOS. The six Windows-only checks are outstanding locally.
+A new Windows CI run is required for this updated JAR. The prior implementation passed
+97 Windows checks in run 36544810524; that is not a result for the new changes.
+
+Endpoint coverage exercises the single URL file without saved documentation, chat URL
+persistence, target reopening and invalid-URL recovery with the last review preserved.
 
 New coverage includes missing-purpose discovery, optional URLs, concrete proposals without
 business confirmation, source/API evidence requirements, discovery provenance, preference

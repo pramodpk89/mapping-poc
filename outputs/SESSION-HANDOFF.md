@@ -11,6 +11,15 @@ optional. If supplied, the agent inspects it; otherwise it discovers APIs from t
 This explicitly supersedes the earlier mandatory-purpose and mandatory-target-URL gates.
 Missing business decisions must not block all evidence-backed proposals. Keep responses short.
 
+## Latest simplification
+
+Shopify now contains only API-Endpoint.txt. Paste one URL there or in Copilot chat;
+blank still supports source-driven discovery. The helper imports that file, saves chat URLs
+there, removes the duplicate Understanding URL label, and preserves/reopens reviews.
+All prior Shopify docs/config/notes moved unchanged into .framework/references/shopify.
+They are internal evidence, not analyst setup. Three new endpoint regression checks pass.
+The rebuilt JAR passes 94 portable checks on Java 8; Windows rerun pending.
+
 ## Current real report
 
 outputs/copilot-mapping-poc/Report.html now contains **five proposed mappings and two
@@ -49,7 +58,7 @@ Java 1.8, java-home.properties, map.cmd and /map-interface remain. No Python, No
 extra modules, administrator access, execution-policy bypass or live ERP/Shopify writes.
 Original XML/WSDL and saved Shopify docs remain unchanged.
 
-## Validation
+## Previous validation (before endpoint-only update)
 
 New implementation: actual JDK 8 compilation and **91 portable checks passed, 0 failed**
 on macOS/Corretto 1.8.0_382. Actual Windows execution: **97 passed, 0 failed, 0 outstanding**,
@@ -63,9 +72,9 @@ Browser rendering and Print/PDF remain unverified: browser access was denied bec
 admin-enforced policy could not be verified. No bypass attempted. Actual Copilot pilot remains
 outstanding. Tests must never be used as customer business confirmations.
 
-The real report and five scenarios from each test host passed static inspection. The single
-ZIP contains 46 files, verified byte-for-byte, including the hidden skill, Java sources, JAR,
+The real report and five scenarios from each test host passed static inspection. The previous
+ZIP contained 46 files, verified byte-for-byte, including the hidden skill, Java sources, JAR,
 real Report.html and last successful review. Fourteen original references remain unchanged.
-Implementation, report, instructions, tests, handoff and ZIP are complete and pushed to main.
+The prior implementation was pushed to main. The endpoint-only update is being validated.
 Use the real Report.html for customer review, not the synthetic test scenarios. Further work
 should focus on analyst business decisions or requested refinements, not resetting proposals.

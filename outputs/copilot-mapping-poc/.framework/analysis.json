@@ -1,6 +1,6 @@
 {
   "changes": [
-    "Replaced the empty framework demonstration with actual XML-to-Shopify mapping proposals, researched against current official documentation. Proposed mappings are separate from business confirmation."
+    "Simplified Shopify setup to one optional URL. Historical research was relocated without changing its content. The source XML, proposed destinations and unresolved business decisions remain the same."
   ],
   "evidence": [
     {
@@ -74,8 +74,8 @@
       "url": "Current/Source/checkout-1.wsdl"
     }
   ],
-  "generated_at": "2026-09-29T08:45:26Z",
-  "input_sha256": "9410d15b83b140b6285fdca176657ec6bb569460a90964ae3341c6a9262c160a",
+  "generated_at": "2026-09-29T08:54:48Z",
+  "input_sha256": "534af19ea7aba2e684c67f594afa94017f75bf5452b196518066a3817545ddf0",
   "interface_gates": [
     {
       "description": "Choose stock synchronization, availability display, or both.",
@@ -429,7 +429,7 @@
       "why": "Defines processing rules beyond individual field assignments."
     }
   ],
-  "revision": 4,
+  "revision": 5,
   "schema_version": "1.0",
   "summary": "Five concrete mappings proposed from the supplied XML, plus two candidate mappings needing a business decision. The design uses SKU lookup, conditional inventory updates and clearly identified custom fields. No customer decisions or Shopify store identities have been assumed.",
   "target_candidates": [

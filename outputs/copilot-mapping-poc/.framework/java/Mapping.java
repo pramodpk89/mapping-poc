@@ -185,8 +185,7 @@ public final class Mapping {
 
   Map<String, Object> understanding() throws IOException {
     Map<String, Object> result = map();
-    if (!Files.exists(p("Understanding.txt"))) return result;
-    String text = read(p("Understanding.txt"));
+    String text = Files.exists(p("Understanding.txt")) ? read(p("Understanding.txt")) : "";
     List<MatcherData> marks =
         marks(text, "(?im)^[ \\t]*(" + String.join("|", LABELS) + ")[ \\t]*:[ \\t]*");
     for (int n = 0; n < marks.size(); n++) {
@@ -199,15 +198,29 @@ public final class Mapping {
           text.substring(m.end, n + 1 < marks.size() ? marks.get(n + 1).start : text.length())
               .trim());
     }
+    // The single analyst-facing Shopify file overrides the legacy Understanding label.
+    if (Files.exists(p("Shopify/API-Endpoint.txt"))) {
+      local(p("Shopify/API-Endpoint.txt"));
+      StringBuilder endpoint = new StringBuilder();
+      for (String line : read(p("Shopify/API-Endpoint.txt")).split("\\r?\\n"))
+        if (!line.trim().isEmpty() && !line.trim().startsWith("#")) {
+          if (endpoint.length() > 0) endpoint.append(" ");
+          endpoint.append(line.trim());
+        }
+      result.put("shopify endpoint/reference", endpoint.toString());
+    }
     return result;
   }
 
   void setUnderstanding(Map<String, Object> updates) throws IOException {
     Map<String, Object> data = understanding();
     for (String k : updates.keySet()) data.put(k.toLowerCase(Locale.ROOT), updates.get(k));
+    if (updates.containsKey("Shopify endpoint/reference") || updates.containsKey("shopify endpoint/reference"))
+      write(p("Shopify/API-Endpoint.txt"), str(data.get("shopify endpoint/reference")) + "\n");
     List<String> blocks = new ArrayList<>();
     for (String label : LABELS)
-      blocks.add((label + ": " + str(data.get(label.toLowerCase(Locale.ROOT)))).trim());
+      if (!label.equals("Shopify endpoint/reference") || !Files.exists(p("Shopify/API-Endpoint.txt")))
+        blocks.add((label + ": " + str(data.get(label.toLowerCase(Locale.ROOT)))).trim());
     write(p("Understanding.txt"), String.join("\n\n", blocks) + "\n");
   }
 
@@ -496,6 +509,7 @@ public final class Mapping {
         throw new IllegalArgumentException("Framework configuration needs a boolean for " + k);
     List<Path> files = files(p("Current"));
     files.addAll(files(p("Shopify")));
+    files.addAll(files(fw.resolve("references/shopify")));
     for (String n :
         Arrays.asList(
             "Understanding.txt",
@@ -1245,9 +1259,12 @@ public final class Mapping {
           // Back up before edits, roll back partial saves on I/O failure. Valid but incomplete
           // answers stay saved.
           Path backup = archive("input-edits");
-          String[] names = {"Understanding.txt", "Questions.txt", "Decisions.csv"};
+          String[] names = {"Understanding.txt", "Questions.txt", "Decisions.csv", "Shopify/API-Endpoint.txt"};
           for (String name : names)
-            if (Files.exists(p(name))) Files.copy(p(name), backup.resolve(name));
+            if (Files.exists(p(name))) {
+              Files.createDirectories(backup.resolve(name).getParent());
+              Files.copy(p(name), backup.resolve(name));
+            }
           try {
             if (!updates.isEmpty()) setUnderstanding(updates);
             if (!answers.isEmpty()) setAnswers(answers, arr(a.get("questions")));

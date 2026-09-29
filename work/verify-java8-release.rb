@@ -15,10 +15,11 @@ end
 expected=Dir.glob(base+'/**/*',File::FNM_DOTMATCH).select{|f|File.file?(f)}.reject{|f|f.match?(/\/history\/|\/build\/|run-history|run.lock|clarifications.json|\/Test-results\/|\.DS_Store/) }.map{|f|f.sub('outputs/','')}
 raise 'ZIP coverage differs from folder' unless files.sort==expected.sort
 raise 'Copilot skill missing' unless files.include?('copilot-mapping-poc/.github/skills/map-interface/SKILL.md')
-refs=Dir.glob(base+'/Current/Source/*').select{|f|f.match?(/\.(xml|wsdl)$/)}+Dir.glob(base+'/Shopify/Docs/*')+[base+'/Shopify/Target-reference.json']
+raise 'Shopify setup must contain only the URL entry file' unless Dir.children(base+'/Shopify')==['API-Endpoint.txt']
+refs=Dir.glob(base+'/Current/Source/*').select{|f|f.match?(/\.(xml|wsdl)$/)}+Dir.glob(base+'/.framework/references/shopify/Docs/*')+[base+'/.framework/references/shopify/Target-reference.json']
 baseline = ARGV.fetch(0, "19e2fc0")
 refs.each do |file|
- old, status=Open3.capture2('git','show',baseline+':'+file)
+ old, status=Open3.capture2('git','show',baseline+':'+file.sub('/.framework/references/shopify/', '/Shopify/'))
  raise "Evidence changed: #{file}" unless status.success? && old.b==File.binread(file)
 end
 real_input=JSON.parse(File.read(base+"/.framework/input.json"))

@@ -1,0 +1,3 @@
+# Paste your Shopify API endpoint or reference URL below.
+# Optional: leave blank for Copilot to discover it from the source XML.
+

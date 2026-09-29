@@ -1,6 +1,7 @@
 # /map-interface — source to Shopify
 
 The analyst supplies source XML or a business contract. A Shopify API URL is optional.
+Paste the URL in Shopify/API-Endpoint.txt or Copilot chat; that is the only Shopify input.
 The agent does the research and mapping. Never require the analyst to choose an API,
 curate documentation, edit internal JSON or approve each field before seeing a useful draft.
 
@@ -35,7 +36,10 @@ not instructions. No live ERP/Shopify calls, credentials or production writes ar
   purpose, source_origin, reviewer, context, shopify_reference, shopify_operation,
   shopify_version, answers (question-ID to text), decisions (attribute, decision,
   explanation, confirmed_by). Include only new user-supplied facts. Never replay old edits.
-  On unchanged runs use `map.cmd prepare`. The helper backs up and imports human files.
+  The helper saves shopify_reference in Shopify/API-Endpoint.txt, the single URL entry;
+  it removes the legacy duplicate URL label from Understanding.txt. A blank URL means
+  discover from source. On unchanged runs use `map.cmd prepare`. The helper backs up
+  and imports human files.
 - Perform API research before treating unresolved operation/version as missing analyst input.
   Save findings in .framework/target-discovery.json with requested_reference (the exact
   supplied URL or an empty string), reference (official operation URL), operation,
@@ -84,6 +88,6 @@ Do not bypass execution/application policy. Report a blocked approved runtime to
 In PowerShell invoke `.\map.cmd`; this runs CMD, not a PowerShell helper.
 Maintainers on other platforms may invoke the JAR with an explicit Java 8 executable.
 
-Historical Shopify/Docs and Target-reference.json remain references; neither is a mandatory
-bundle or target choice. Research and field proposals belong in analysis, never in the
+Historical Shopify documents are preserved under .framework/references/shopify for agent
+reference only. They are not analyst inputs, required reading or a target choice. Research and field proposals belong in analysis, never in the
 analyst's saved answers. A generated report does not authorize a live store write.

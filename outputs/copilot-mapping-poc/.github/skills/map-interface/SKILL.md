@@ -6,7 +6,10 @@ description: Map supplied XML or business contracts to Shopify attributes. Disco
 # Functional analyst mapping
 
 Read [RUN.md](../../../RUN.md), then complete discovery, mapping and report generation.
-The analyst supplies XML or a contract. They may optionally supply a Shopify API URL.
+The analyst supplies XML or a contract. Shopify setup is only an optional API URL in
+Shopify/API-Endpoint.txt or chat. Save chat URLs through prepare --edits shopify_reference;
+never ask the analyst to maintain a documentation folder. Historical documents are in
+.framework/references/shopify for agent reference only.
 The agent researches APIs and fields. Do not ask for curated documentation, internal JSON,
 API version research or per-field approvals before producing a draft.
 
