@@ -58,7 +58,7 @@ Unicode environment values and launches the JAR with a relative name; passing th
 paths directly to Java 8's native `-jar` command can lose characters outside the system
 code page. The Java installation folder itself must use **ASCII characters** (spaces are supported).
 Real Windows tests found native Java 8 DLL/bootstrap failures from a Unicode installation
-folder, even using a short-path alias. The launcher now rejects that configuration with
+folder, even using a short-path alias. The launcher checks native startup and rejects a failing configuration with
 a clear message; this is an explicit supported-path restriction, not a passing Unicode
 runtime test. Use a support-approved ASCII Java path. Unicode pack/evidence/answer paths
 are supported and tested separately. No registry or system short-name changes are made.

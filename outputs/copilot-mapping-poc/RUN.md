@@ -98,5 +98,5 @@ is the supported analyst entry point and reads java-home.properties before launc
 The configured Java installation folder must use ASCII characters; spaces are supported.
 The mapping pack, evidence filenames and analyst answers may contain Unicode. Actual Windows
 testing exposed native Java 8 library-loading failures from Unicode runtime folders, so
-map.cmd rejects that runtime configuration with a clear setup message. Use a support-approved
+map.cmd checks native startup and reports a clear setup message on failure. Use a support-approved
 ASCII Java path. See TESTING.md; do not change registry or short-name settings.

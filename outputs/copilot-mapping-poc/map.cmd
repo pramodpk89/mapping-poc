@@ -13,10 +13,10 @@ set "MAPPING_OUTPUT="
 if not exist "%~dp0java-home.properties" goto missing
 for /f "usebackq tokens=1,* delims==" %%A in ("%~dp0java-home.properties") do if "%%A"=="java.home" set "MAPPING_JAVA_HOME=%%B"
 if not defined MAPPING_JAVA_HOME goto missing
-rem The legacy native JVM cannot reliably load its libraries from Unicode runtime paths.
-set MAPPING_JAVA_HOME | findstr /r /v /c:"^[ -~]*$" >nul
-if not errorlevel 1 goto runtimechars
 if not exist "%MAPPING_JAVA_HOME%\bin\java.exe" goto invalid
+rem Probe the native runtime before starting the helper; preserve corporate policies.
+"%MAPPING_JAVA_HOME%\bin\java.exe" -version >nul 2>&1
+if errorlevel 1 goto runtimechars
 shift
 :options
 if "%~1"=="" goto launch
@@ -60,7 +60,7 @@ goto failed
 echo The configured Java folder has no bin\java.exe. Correct java.home in java-home.properties.
 goto failed
 :runtimechars
-echo Java 8 runtime folders must use ASCII characters. Set java.home to an approved ASCII path; spaces are supported.
+echo Java could not start from the configured folder. Set java.home to an approved ASCII Java 8 path; spaces are supported.
 echo The mapping pack and evidence filenames may still contain Unicode.
 goto failed
 :badoption

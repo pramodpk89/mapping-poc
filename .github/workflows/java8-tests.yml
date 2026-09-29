@@ -4,6 +4,7 @@ on:
 jobs:
   windows-java8:
     runs-on: windows-latest
+    timeout-minutes: 8
     permissions:
       contents: read
     steps:

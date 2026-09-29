@@ -1237,16 +1237,19 @@ final class WorkflowTests {
       Mapping.write(wrapper, script.toString());
       builder.command("cmd.exe", "/d", "/c", wrapper.toString());
     }
-    Process p = builder.directory(temp.toFile()).redirectErrorStream(true).start();
-
-    ByteArrayOutputStream b = new ByteArrayOutputStream();
-    try (InputStream in = p.getInputStream()) {
-      byte[] buffer = new byte[8192];
-      int n;
-      while ((n = in.read(buffer)) >= 0) b.write(buffer, 0, n);
+    Path log = temp.resolve("child-process.log");
+    Process p =
+        builder
+            .directory(temp.toFile())
+            .redirectErrorStream(true)
+            .redirectOutput(log.toFile())
+            .start();
+    if (!p.waitFor(45, java.util.concurrent.TimeUnit.SECONDS)) {
+      p.destroyForcibly();
+      throw new AssertionError("Child command timed out after 45 seconds: " + command[0]);
     }
-    int code = p.waitFor();
-    if (code != 0) System.out.println(new String(b.toByteArray(), StandardCharsets.UTF_8));
+    int code = p.exitValue();
+    if (code != 0) System.out.println(Mapping.read(log));
     return code;
   }
 
