@@ -652,7 +652,7 @@ final class WorkflowTests {
         () -> {
           prepare();
           synthetic();
-          eq(process(javaExe(), "-jar", m.fw.resolve("mapping.jar").toString(), "generate"), 0);
+          eq(invokeJar("generate"), 0);
         });
     test(
         "34 Boolean settings must be boolean",
@@ -968,15 +968,7 @@ final class WorkflowTests {
           String answer = "\u20b9 \u03a9 $(not-a-command) %PATH% !keep! & <script>";
           Mapping.save(
               f, map("purpose", "SYNTHETIC command boundary test.", "answers", map("Q03", answer)));
-          eq(
-              process(
-                  javaExe(),
-                  "-jar",
-                  m.fw.resolve("mapping.jar").toString(),
-                  "prepare",
-                  "--edits",
-                  f.toString()),
-              0);
+          eq(invokeJar("prepare", "--edits", f.toString()), 0);
           eq(o(m.load("input.json").get("answers")).get("Q03"), answer);
         });
     test(
@@ -1043,16 +1035,7 @@ final class WorkflowTests {
         });
     test(
         "65 Invalid CLI options fail",
-        () ->
-            eq(
-                process(
-                    javaExe(),
-                    "-jar",
-                    m.fw.resolve("mapping.jar").toString(),
-                    "generate",
-                    "--edits",
-                    "ignored.json"),
-                2));
+        () -> eq(invokeJar("generate", "--edits", "ignored.json"), 2));
     test(
         "66 Clarification backups preserve prior bytes",
         () -> {
@@ -1085,6 +1068,23 @@ final class WorkflowTests {
               "Last review rolled back after output failure");
           deleteTree(m.p("Report.html"));
           generate(0);
+        });
+    test(
+        "73 Malformed CLI clarification preserves history and blocks current report",
+        () -> {
+          prepare();
+          synthetic();
+          generate(0);
+          byte[] last = Files.readAllBytes(m.p("Last-review.html"));
+          Path edits = m.p("bad edits.json");
+          Mapping.write(edits, "{broken");
+          eq(invokeJar("prepare", "--edits", edits.toString()), 2);
+          require(
+              Mapping.read(m.p("Report.html")).contains("Input needs attention"),
+              "Current blocker notice");
+          require(
+              Arrays.equals(last, Files.readAllBytes(m.p("Last-review.html"))),
+              "Preserved last review");
         });
     if (System.getProperty("os.name").startsWith("Windows")) {
       test(
@@ -1181,9 +1181,37 @@ final class WorkflowTests {
         .toString();
   }
 
+  int invokeJar(String... args) throws Exception {
+    List<String> command = new ArrayList<>();
+    if (System.getProperty("os.name").startsWith("Windows")) {
+      Mapping.write(
+          m.p("java-home.properties"), "java.home=" + System.getProperty("java.home") + "\r\n");
+      command.addAll(Arrays.asList("cmd.exe", "/d", "/c", m.p("map.cmd").toString()));
+    } else command.addAll(Arrays.asList(javaExe(), "-jar", m.fw.resolve("mapping.jar").toString()));
+    command.addAll(Arrays.asList(args));
+    return process(command.toArray(new String[0]));
+  }
+
   int process(String... command) throws Exception {
-    Process p =
-        new ProcessBuilder(command).directory(temp.toFile()).redirectErrorStream(true).start();
+
+    ProcessBuilder builder = new ProcessBuilder(command);
+    if (command[0].equals("cmd.exe")) {
+      // An ASCII test wrapper supplies correctly quoted Unicode script and arguments
+      // to CMD via environment variables, independent of the Java launcher's code page.
+      Path wrapper = temp.resolve("invoke.cmd");
+      StringBuilder script = new StringBuilder("@echo off\r\nsetlocal DisableDelayedExpansion\r\n");
+      for (int n = 3; n < command.length; n++) {
+        String key = "MAPPING_TEST_ARG_" + n;
+        builder.environment().put(key, command[n]);
+        if (n > 3) script.append(' ');
+        script.append('"').append('%').append(key).append('%').append('"');
+      }
+      script.append("\r\nexit /b %ERRORLEVEL%\r\n");
+      Mapping.write(wrapper, script.toString());
+      builder.command("cmd.exe", "/d", "/c", wrapper.toString());
+    }
+    Process p = builder.directory(temp.toFile()).redirectErrorStream(true).start();
+
     ByteArrayOutputStream b = new ByteArrayOutputStream();
     try (InputStream in = p.getInputStream()) {
       byte[] buffer = new byte[8192];

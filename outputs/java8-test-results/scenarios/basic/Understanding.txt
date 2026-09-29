@@ -8,6 +8,6 @@ Target flow: ERP -> middleware -> Shopify
 
 Payload origin: Unknown
 
-Reviewer: 
+Reviewer:
 
 Additional context: Add your current understanding, examples and corrections here. Unknown business rules can remain unknown.

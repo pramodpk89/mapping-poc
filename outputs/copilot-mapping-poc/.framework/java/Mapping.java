@@ -204,7 +204,7 @@ public final class Mapping {
     for (String k : updates.keySet()) data.put(k.toLowerCase(Locale.ROOT), updates.get(k));
     List<String> blocks = new ArrayList<>();
     for (String label : LABELS)
-      blocks.add(label + ": " + str(data.get(label.toLowerCase(Locale.ROOT))));
+      blocks.add((label + ": " + str(data.get(label.toLowerCase(Locale.ROOT)))).trim());
     write(p("Understanding.txt"), String.join("\n\n", blocks) + "\n");
   }
 
@@ -266,7 +266,7 @@ public final class Mapping {
                 + "\n";
       }
     }
-    write(p("Questions.txt"), text);
+    write(p("Questions.txt"), text.replaceAll("\\s+$", "") + "\n");
   }
 
   /** CSV state machine: quoted multiline cells, Excel delimiters, and strict cell counts. */
@@ -1239,7 +1239,30 @@ public final class Mapping {
               + " test [--output DIR]");
       return 2;
     }
+    if (args.length == 1 && args[0].equals("--launcher")) {
+      List<String> launch = new ArrayList<>();
+      launch.add(str(System.getenv("MAPPING_ACTION")));
+      String[] names = {
+        "MAPPING_ROOT",
+        "--root",
+        "MAPPING_EDITS",
+        "--edits",
+        "MAPPING_IMPORT",
+        "--import-answers",
+        "MAPPING_OUTPUT",
+        "--output"
+      };
+      for (int n = 0; n < names.length; n += 2) {
+        String value = System.getenv(names[n]);
+        if (value != null && !value.isEmpty()) {
+          launch.add(names[n + 1]);
+          launch.add(value);
+        }
+      }
+      return run(launch.toArray(new String[0]));
+    }
     String action = args[0];
+
     Map<String, String> options = new HashMap<>();
     for (int n = 1; n < args.length; n += 2) {
       if (n + 1 >= args.length
@@ -1257,8 +1280,21 @@ public final class Mapping {
             options.containsKey("--root") ? Paths.get(options.get("--root")) : defaultRoot());
     switch (action) {
       case "prepare":
+        Map<String, Object> edits;
+        try {
+          edits =
+              options.containsKey("--edits") ? obj(json(Paths.get(options.get("--edits")))) : map();
+        } catch (Exception e) {
+          // A malformed chat data file is a failed run too, not a reason to display the
+          // previous report as current. Take the same lock before replacing its notice.
+          try (RunLock ignored = m.new RunLock()) {
+            m.notice("Input needs attention", list(e.getMessage()));
+          }
+          System.err.println(e.getMessage());
+          return 2;
+        }
         return m.prepare(
-            options.containsKey("--edits") ? obj(json(Paths.get(options.get("--edits")))) : map(),
+            edits,
             options.containsKey("--import-answers")
                 ? Paths.get(options.get("--import-answers"))
                 : null);

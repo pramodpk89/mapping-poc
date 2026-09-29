@@ -36,4 +36,3 @@ Answer: SYNTHETIC: N is normal stock; do not send this attribute.
 Q09: How is the feed delivered?
 Schedule or event? Full snapshot or partial feed? What should happen to missing, duplicate, late or failed records?
 Answer:
-
