@@ -52,11 +52,20 @@ Original XML/WSDL and saved Shopify docs remain unchanged.
 ## Validation
 
 New implementation: actual JDK 8 compilation and **91 portable checks passed, 0 failed**
-on macOS/Corretto 1.8.0_382. Six Windows-only checks await the new Windows CI run.
-Previous 89-check Windows results do not validate this changed implementation.
+on macOS/Corretto 1.8.0_382. Actual Windows execution: **97 passed, 0 failed, 0 outstanding**,
+Windows Server 2025 / Temurin Java 1.8.0_504. The JAR and CMD launcher ran; sources compiled
+with JDK 8. Tested implementation: c8196169c2a60239f781bbc6f6a378206e9ea781.
+CI: https://github.com/pramodpk89/mapping-poc/actions/runs/36544810524 .
+Agent discovery is bound to source evidence; changed inputs cannot silently inherit an old
+API recommendation. Downloaded results are in outputs/windows-java8-test-results/.
 Five synthetic workflow scenarios are inspected statically, separately from the real report.
 Browser rendering and Print/PDF remain unverified: browser access was denied because the
 admin-enforced policy could not be verified. No bypass attempted. Actual Copilot pilot remains
 outstanding. Tests must never be used as customer business confirmations.
 
-Next: finish Windows CI, save actual results, refresh ZIP verification and push final records.
+The real report and five scenarios from each test host passed static inspection. The single
+ZIP contains 46 files, verified byte-for-byte, including the hidden skill, Java sources, JAR,
+real Report.html and last successful review. Fourteen original references remain unchanged.
+Implementation, report, instructions, tests, handoff and ZIP are complete and pushed to main.
+Use the real Report.html for customer review, not the synthetic test scenarios. Further work
+should focus on analyst business decisions or requested refinements, not resetting proposals.
