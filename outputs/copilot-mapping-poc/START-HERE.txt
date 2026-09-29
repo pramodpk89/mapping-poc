@@ -1,5 +1,9 @@
 RUN THIS INTERFACE WITH GITHUB COPILOT
 
+CURRENT LIMITATION: the team's Windows machines have no Python. This pack still
+requires Python and is not ready for that environment. A replacement execution
+path is pending; do not treat the setup below as already available to the team.
+
 One-time setup
 Ask your support team to provide VS Code, GitHub Copilot access with Agent capabilities,
 and Python 3.9 or newer. Sign in to Copilot. This pack does not need an API key.

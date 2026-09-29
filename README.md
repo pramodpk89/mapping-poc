@@ -1,5 +1,7 @@
 # Integration mapping POC
 
+**Current blocker:** the team's Windows machines have no Python. This version still requires Python; a compatible execution path is the next task. See the [session handoff](outputs/SESSION-HANDOFF.md).
+
 AI-assisted mapping from ERP/middleware source evidence to Shopify, starting with item availability. Functional analysts supply payloads, WSDLs, their understanding, and attribute decisions. The workflow produces a read-only HTML mapping report with evidence and unresolved questions.
 
 ## Start here
