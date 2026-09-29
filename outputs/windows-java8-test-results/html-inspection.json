@@ -1,0 +1,20 @@
+{
+  "checks": [
+    {
+      "scenario": "basic",
+      "static_inspection": "passed",
+      "sku_type_status": "needs_input"
+    },
+    {
+      "scenario": "clarified",
+      "static_inspection": "passed",
+      "sku_type_status": "excluded"
+    },
+    {
+      "scenario": "reopened",
+      "static_inspection": "passed",
+      "sku_type_status": "needs_input"
+    }
+  ],
+  "visual_browser_review": "Outstanding: local-file URL blocked by browser security policy. No workaround attempted."
+}

@@ -66,3 +66,21 @@ are supported and tested separately. No registry or system short-name changes ar
 Git attributes preserve source/documentation bytes across checkouts, because line-ending
 conversion must not silently change the evidence SHA-256 hashes. Pack ZIPs preserve those
 bytes too. The portable suite is also compiled and run on a real local Java 8 runtime.
+
+## Recorded results — 29 September 2026
+
+- Windows: **75 passed, 0 failed**, Java 1.8.0_504 (Temurin) on Windows Server 2025.
+  [Successful CI run](https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866).
+  The shipped JAR was executed and all Java sources compiled with a Java 8 compiler.
+- macOS: **69 passed, 0 failed**, Java 1.8.0_382 (Amazon Corretto). Six Windows-only
+  checks were marked outstanding on that host and subsequently executed in Windows CI.
+- The original 43 scenarios are included in these counts, rather than additional runs.
+- Three generated HTML scenarios passed static inspection of structure, embedded data,
+  read-only controls, answer preservation and reopened status. Visual browser inspection
+  is outstanding because the browser tool rejected local-file URLs. No workaround was used.
+- ZIP contents were verified byte-for-byte. The real purpose and WSDL provenance remain
+  unconfirmed, and original evidence, documentation and real analyst files are unchanged.
+
+Repository reports: outputs/java8-test-results/ and outputs/windows-java8-test-results/.
+The latter contains ci-run.json linking the executed implementation commit. Later commits
+that only add validation records/documentation do not change that tested JAR.

@@ -46,23 +46,29 @@ concurrency examples versus live schema still need validation.
 
 ## Validation
 
-Local execution: Java 1.8.0_382 (Amazon Corretto), macOS, actual compilation and execution.
-67 portable checks passed, including the 43 ported Python scenarios. Five Windows-specific
-checks were correctly marked outstanding on macOS. Results: outputs/java8-test-results/.
-The GitHub Windows Java 8 workflow is being used to validate the actual Windows launcher,
-Unicode paths, configured Java folder, and locked-file recovery; its final outcome is to be
-recorded here before completion. Browser inspection and final ZIP verification are in progress.
-The suite does not validate Copilot reasoning or the organization's policy configuration.
-A real Windows analyst Copilot pilot, Print/PDF and live Shopify validation remain outstanding.
+Local execution: Java 1.8.0_382 (Amazon Corretto), macOS, actual JDK 8 compilation and
+execution. 69 portable checks passed, including cases 01-43 ported from the original
+Python suite. Six Windows-only checks are correctly recorded as outstanding on macOS.
+Results: outputs/java8-test-results/Test-results.html and results.json.
 
-## Files and maintenance
+Actual Windows CI testing exposed and corrected line-ending conversion of evidence,
+Unicode CLI argument loss and launcher working-directory handling. Final Windows validation: **75 passed, 0 failed, 0 outstanding automated checks**,
+Java 1.8.0_504 (Temurin), Windows Server 2025. Sources also compiled with JDK 8.
+Evidence: outputs/windows-java8-test-results/Test-results.html and results.json.
+Successful CI: https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866 . Native Java 8
+failed to load libraries from a Unicode installation folder. The supported Java-home path
+therefore uses ASCII characters (spaces supported). Unicode pack, evidence, edits-file and
+answer paths are handled through map.cmd's Unicode environment boundary. Do not bypass
+policy or change registry/short-name settings. Use an approved ASCII Java installation path.
 
-- START-HERE.txt, RUN.md, TESTING.md and .github instructions describe the Java workflow.
-- .framework/java contains Json.java, Mapping.java and WorkflowTests.java.
-- The Windows acceptance workflow runs the shipped JAR and compiles sources with JDK 8.
-- Legacy Python helpers/tests are archived in work/legacy-python for traceability only.
-- Older prototype packs and test reports are historical, not the active implementation.
-- Exit codes: 0 success; 2 blocked/setup/invalid input; 3 analysis stale; test failure 1.
+Three generated report scenarios were inspected statically: basic, clarified and reopened.
+Checked embedded JSON, seven-field coverage, read-only controls, preserved answers and
+reopened status. Browser visual inspection remains outstanding: browser security policy
+blocked local file URLs; no workaround was attempted. Print/PDF was not exercised.
+The ZIP was checked for internal integrity and byte-for-byte correspondence, including the
+JAR, hidden Copilot skill, source evidence and saved Shopify docs; no Python/PowerShell or
+transient run history is included. The real pack still blocks on missing business purpose.
 
-Before a real mapping review, obtain the business purpose and clarify WSDL/source provenance.
-Never fill those gaps using test fixtures.
+Tests do not validate Copilot reasoning, organization-specific policy or actual analyst
+Copilot skill discovery. A real analyst pilot and live Shopify/schema validation remain
+outstanding. All synthetic decisions are confined to temporary tests and labelled reports.

@@ -47,3 +47,7 @@ The framework's TESTING.md explains the recorded local and Windows test evidence
 
 The Java installation folder must use ASCII characters; spaces are supported. The
 mapping folder, evidence and answers may contain Unicode. See TESTING.md for details.
+
+Verified: 75 automated checks passed on Windows with Java 1.8, and 69 portable checks
+passed on macOS with Java 1.8. HTML static checks passed; visual browser review and
+the real analyst Copilot pilot remain outstanding. All test decisions are synthetic.

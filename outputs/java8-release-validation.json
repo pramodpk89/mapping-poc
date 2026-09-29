@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-09-29T07:32:05Z",
+  "zip_files_verified": 42,
+  "zip_sha256": "bd9f4d48107e2062b23e2a7c2387ad82c7e59869f1a03fe0c75ad02fff9343f2",
+  "jar_sha256": "7776fb2aebcee969d37c323243bc79a889d863a4f19993069db538cc0accfe01",
+  "java_class_version": 52,
+  "windows_ci": {
+    "conclusion": "success",
+    "headSha": "54f3470abb22ff64a546a9704caf4577175f1d93",
+    "url": "https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866"
+  },
+  "local_tests": {
+    "os": "macOS",
+    "java": "1.8.0_382",
+    "passed": 69,
+    "failed": 0,
+    "windows_only_outstanding_on_this_host": 6
+  },
+  "windows_tests": {
+    "os": "Windows Server 2025",
+    "java": "1.8.0_504",
+    "passed": 75,
+    "failed": 0
+  },
+  "real_business_purpose": "unconfirmed",
+  "wsdl_provenance": "unconfirmed",
+  "visual_browser_review": "outstanding"
+}

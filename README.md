@@ -16,7 +16,9 @@ the last successful review through failed reruns. The real business purpose and 
 WSDLs' role/provenance remain **unconfirmed**. All test/demo decisions are synthetic.
 
 - [Workflow](outputs/copilot-mapping-poc/RUN.md) and [testing/build guide](outputs/copilot-mapping-poc/TESTING.md).
-- [Java 8 local test results](outputs/java8-test-results/Test-results.html), with generated review scenarios.
+- [Windows Java 8 test results](outputs/windows-java8-test-results/Test-results.html): 75 passed;
+  [successful Windows CI](https://github.com/pramodpk89/mapping-poc/actions/runs/36536958866).
+- [Java 8 local test results](outputs/java8-test-results/Test-results.html), 69 passed on macOS, with generated review scenarios.
 - [Shopify reference](outputs/copilot-mapping-poc/Shopify/README.md): eight saved official pages.
 - [Updated session handoff](outputs/SESSION-HANDOFF.md).
 
@@ -25,5 +27,7 @@ Open downloaded HTML in a browser; GitHub's file view displays source. Earlier
 and evidence. Legacy Python helpers are archived in `work/legacy-python`, outside the active
 pack. The Java migration supersedes the earlier PowerShell plan at the user's request.
 
-A real analyst Copilot pilot and live Shopify validation remain outstanding. No ERP or
+The Java installation path must use ASCII characters; spaces are supported. Unicode pack,
+evidence and answer paths passed Windows tests. A real analyst Copilot pilot, visual browser
+review and live Shopify validation remain outstanding. No ERP or
 Shopify writes are performed by this framework.

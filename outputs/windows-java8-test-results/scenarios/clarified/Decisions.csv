@@ -1,0 +1,8 @@
+Attribute,Decision,Explanation,Confirmed by
+"AvailableDate","","",""
+"AvailableDateRange","","",""
+"AvailableQuantity","","",""
+"InStock","","",""
+"SKU","","",""
+"WebProductId","","",""
+"SKUType","Exclude SKUType from target payload.","Synthetic fixture only.","Test analyst"
