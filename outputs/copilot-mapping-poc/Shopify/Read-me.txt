@@ -1,2 +1,7 @@
-Copilot stores official Shopify API research here. Add target requirements or store-specific notes if you know them.
-The included research is for API version 2026-07, retrieved 2026-09-29. Inventory updates remain a candidate.
+Start with README.md for the proposed API and links to the saved documentation.
+Docs/ contains eight official Shopify documentation pages and their source manifest.
+Target-reference.json holds the structured research used by the mapping framework.
+
+The included research is for API version 2026-07, retrieved 2026-09-29.
+Inventory updates remain a candidate. Saved docs do not refresh automatically.
+Add target requirements or store-specific notes here if you know them.

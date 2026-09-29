@@ -14,6 +14,7 @@ The HTML is read-only; typing into a report does not trigger an AI run. The curr
 ## Contents
 
 - [Current Copilot pack](outputs/copilot-mapping-poc/) and [ZIP download](outputs/copilot-mapping-poc.zip).
+- [Shopify target and documentation](outputs/copilot-mapping-poc/Shopify/README.md): readable API overview and eight saved official documentation pages.
 - [Test results](outputs/mapping-test-results/Test-results.html), including three synthetic scenarios: initial mapping, clarifications, and a corrected decision.
 - [Workflow regression tests](outputs/copilot-mapping-poc/.framework/tests/test_workflow.py).
 - `outputs/availability-poc` and `outputs/cowork-mapping-poc`: earlier prototypes retained for reference. Use the Copilot pack for current work.
